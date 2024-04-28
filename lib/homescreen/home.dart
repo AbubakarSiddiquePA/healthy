@@ -10,7 +10,6 @@ class Home extends StatelessWidget {
       child: Scaffold(
         appBar: AppBar(
           title: const Text("Habits > future"),
-          leading: Text("Cancel"),
           actions: [
             IconButton(
               onPressed: () {
