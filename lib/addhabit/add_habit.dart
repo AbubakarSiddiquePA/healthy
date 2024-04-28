@@ -122,7 +122,7 @@ class _AddPageState extends State<AddPage> {
                         Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => ReminderPage(),
+                              builder: (context) => const ReminderPage(),
                             ));
                       },
                       child: Container(

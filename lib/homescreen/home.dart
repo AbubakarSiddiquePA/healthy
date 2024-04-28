@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:healthy/addhabit/add_habit.dart';
 
 class Home extends StatelessWidget {
@@ -34,23 +35,36 @@ class Home extends StatelessWidget {
             children: [
               const DrawerHeader(
                 decoration: BoxDecoration(
-                  color: Colors.blue,
+                  color: Colors.black38,
                 ),
-                child: Text('Drawer Header'),
+                child: Text(
+                  'Health',
+                  style: TextStyle(color: Colors.white),
+                ),
               ),
               ListTile(
-                title: const Text('Item 1'),
-                onTap: () {
-                  // Update the state of the app.
-                  // ...
-                },
+                title: const Row(
+                  children: [
+                    Text('About'),
+                    SizedBox(
+                      width: 10,
+                    ),
+                    Icon(Icons.info)
+                  ],
+                ),
+                onTap: () {},
               ),
               ListTile(
-                title: const Text('Item 2'),
-                onTap: () {
-                  // Update the state of the app.
-                  // ...
-                },
+                title: const Row(
+                  children: [
+                    Text('Share'),
+                    SizedBox(
+                      width: 10,
+                    ),
+                    Icon(Icons.share)
+                  ],
+                ),
+                onTap: () {},
               ),
             ],
           ),
