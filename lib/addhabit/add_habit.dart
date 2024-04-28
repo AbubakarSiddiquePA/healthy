@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:healthy/reminders/reminders.dart';
 
 class AddPage extends StatefulWidget {
   const AddPage({super.key});
@@ -117,7 +118,13 @@ class _AddPageState extends State<AddPage> {
                 Row(
                   children: [
                     GestureDetector(
-                      onTap: () {},
+                      onTap: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => ReminderPage(),
+                            ));
+                      },
                       child: Container(
                         decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(10.0),
