@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:healthy/addhabit/add_habit.dart';
 import 'package:healthy/authentication/signin/signin.dart';
 import 'package:healthy/modelclasshabit/addhabit_model.dart';
+import 'package:intl/intl.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -12,7 +13,7 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-  List<Habit> habit = [];
+  List<Habit> habits = [];
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -23,10 +24,17 @@ class _HomeState extends State<Home> {
             IconButton(
               onPressed: () {
                 Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const AddPage(),
-                    ));
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const AddPage(),
+                  ),
+                ).then((newHabit) {
+                  if (newHabit != null) {
+                    setState(() {
+                      habits.add(newHabit);
+                    });
+                  }
+                });
               },
               icon: const Icon(Icons.add),
               iconSize: 28,
@@ -131,7 +139,7 @@ class _HomeState extends State<Home> {
         ),
         body: Column(
           children: [
-            Padding(
+            const Padding(
               padding: EdgeInsets.all(16.0),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -166,26 +174,32 @@ class _HomeState extends State<Home> {
                 ],
               ),
             ),
-            SizedBox(
+            const SizedBox(
               height: 50,
             ),
-            Text(
-              "There are no habits yet.... \ntap the + button to add few",
-              style: TextStyle(fontSize: 18),
-              // textAlign: TextAlign.center,
-            ),
-            SizedBox(
+            const SizedBox(
               height: 50,
             ),
-            Text(
-              "There are no habits yet.... \ntap the + button to add few",
-              style: const TextStyle(fontSize: 18),
-              // textAlign: TextAlign.center,
-            ),
-            Expanded(
-                child: ListView.builder(
-              itemBuilder: (context, index) {},
-            ))
+            habits.isEmpty
+                ? Text(
+                    "There are no habits yet.... \ntap the + button to add few",
+                    style: TextStyle(fontSize: 18),
+                    // textAlign: TextAlign.center,
+                  )
+                : Expanded(
+                    child: ListView.builder(
+                      itemCount: habits.length,
+                      itemBuilder: (context, index) {
+                        Habit habit = habits[index];
+                        return ListTile(
+                          title: Text(habit.name),
+                          subtitle: Text(
+                            "Motivation: ${habit.motivation}\nDays per Week: ${habit.daysPerWeek}\nStart Date: ${DateFormat('yyyy-MM-dd').format(habit.startDate)}",
+                          ),
+                        );
+                      },
+                    ),
+                  ),
           ],
         ),
       ),

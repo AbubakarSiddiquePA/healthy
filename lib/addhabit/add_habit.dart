@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:healthy/modelclasshabit/addhabit_model.dart';
 import 'package:healthy/reminders/reminders.dart';
 import 'package:intl/intl.dart';
 
@@ -16,6 +17,15 @@ class _AddPageState extends State<AddPage> {
     _startDate = DateTime.now();
   }
 
+  void _saveHabit() {
+    Habit newHabit = Habit(
+        name: _nameController.text,
+        motivation: _motivationController.text,
+        daysPerWeek: _daysPerWeek,
+        startDate: _startDate);
+    Navigator.pop(context, newHabit);
+  }
+
   // final _formKey = GlobalKey<FormState>();
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _motivationController = TextEditingController();
@@ -29,7 +39,7 @@ class _AddPageState extends State<AddPage> {
       appBar: AppBar(
         actions: [
           TextButton(
-            onPressed: () {},
+            onPressed: _saveHabit,
             child: const Text("Save"),
           ),
         ],
