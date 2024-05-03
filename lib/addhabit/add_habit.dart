@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:healthy/reminders/reminders.dart';
+import 'package:intl/intl.dart';
 
 class AddPage extends StatefulWidget {
   const AddPage({super.key});
@@ -9,12 +10,18 @@ class AddPage extends StatefulWidget {
 }
 
 class _AddPageState extends State<AddPage> {
-  final _formKey = GlobalKey<FormState>();
+  @override
+  void initState() {
+    super.initState();
+    _startDate = DateTime.now();
+  }
+
+  // final _formKey = GlobalKey<FormState>();
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _motivationController = TextEditingController();
   int _daysPerWeek = 1;
   DateTime _startDate = DateTime.now();
-  bool _reminder = false;
+  // bool _reminder = false;
 
   @override
   Widget build(BuildContext context) {
@@ -74,7 +81,8 @@ class _AddPageState extends State<AddPage> {
                       value: _daysPerWeek,
                       onChanged: (value) {
                         setState(() {
-                          _daysPerWeek != value;
+                          _daysPerWeek =
+                              value!; // Assign the new value to _daysPerWeek
                         });
                       },
                       items: List.generate(
@@ -99,7 +107,7 @@ class _AddPageState extends State<AddPage> {
                         final DateTime? picked = await showDatePicker(
                           context: context,
                           initialDate: _startDate,
-                          firstDate: DateTime(2020),
+                          firstDate: DateTime(2024),
                           lastDate: DateTime(2025),
                         );
                         if (picked != null && picked != _startDate) {
@@ -108,7 +116,8 @@ class _AddPageState extends State<AddPage> {
                           });
                         }
                       },
-                      child: const Text("Select Date"),
+                      child: Text(
+                          "Selected Date: ${DateFormat('yyyy-MM-dd').format(_startDate)}"),
                     ),
                   ],
                 ),

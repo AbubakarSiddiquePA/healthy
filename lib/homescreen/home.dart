@@ -1,10 +1,18 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:healthy/addhabit/add_habit.dart';
+import 'package:healthy/authentication/signin/signin.dart';
+import 'package:healthy/modelclasshabit/addhabit_model.dart';
 
-class Home extends StatelessWidget {
+class Home extends StatefulWidget {
   const Home({super.key});
 
+  @override
+  State<Home> createState() => _HomeState();
+}
+
+class _HomeState extends State<Home> {
+  List<Habit> habit = [];
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -26,11 +34,7 @@ class Home extends StatelessWidget {
           ],
         ),
         drawer: Drawer(
-          // Add a ListView to the drawer. This ensures the user can scroll
-          // through the options in the drawer if there isn't enough vertical
-          // space to fit everything.
           child: ListView(
-            // Important: Remove any padding from the ListView.
             padding: EdgeInsets.zero,
             children: [
               const DrawerHeader(
@@ -47,7 +51,7 @@ class Home extends StatelessWidget {
                   children: [
                     Text('About'),
                     SizedBox(
-                      width: 10,
+                      width: 30,
                     ),
                     Icon(Icons.info)
                   ],
@@ -59,9 +63,36 @@ class Home extends StatelessWidget {
                   children: [
                     Text('Share'),
                     SizedBox(
-                      width: 10,
+                      width: 30,
                     ),
                     Icon(Icons.share)
+                  ],
+                ),
+                onTap: () {},
+              ),
+              ListTile(
+                title: Row(
+                  children: [
+                    const Text('LogOut'),
+                    const SizedBox(
+                      width: 10,
+                    ),
+                    IconButton(
+                      onPressed: () {
+                        FirebaseAuth.instance.signOut().then((value) {
+                          print("signout");
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => const LoginForm(),
+                              ));
+                          ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                  content: Text("You are logged out")));
+                        });
+                      },
+                      icon: const Icon(Icons.logout),
+                    )
                   ],
                 ),
                 onTap: () {},
@@ -93,12 +124,12 @@ class Home extends StatelessWidget {
               icon: Icon(Icons.calendar_view_day_rounded),
             ),
             BottomNavigationBarItem(
-              label: "Challenge",
-              icon: Icon(Icons.more),
+              label: "Community",
+              icon: Icon(Icons.chat),
             ),
           ],
         ),
-        body: const Column(
+        body: Column(
           children: [
             Padding(
               padding: EdgeInsets.all(16.0),
@@ -142,7 +173,19 @@ class Home extends StatelessWidget {
               "There are no habits yet.... \ntap the + button to add few",
               style: TextStyle(fontSize: 18),
               // textAlign: TextAlign.center,
-            )
+            ),
+            SizedBox(
+              height: 50,
+            ),
+            Text(
+              "There are no habits yet.... \ntap the + button to add few",
+              style: const TextStyle(fontSize: 18),
+              // textAlign: TextAlign.center,
+            ),
+            Expanded(
+                child: ListView.builder(
+              itemBuilder: (context, index) {},
+            ))
           ],
         ),
       ),
