@@ -1,12 +1,15 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:healthy/addhabit/add_habit.dart';
 import 'package:healthy/authentication/signin/signin.dart';
+import 'package:healthy/challenges/const%20challenges/Challenges.dart';
+import 'package:healthy/community/community.dart';
 import 'package:healthy/modelclasshabit/addhabit_model.dart';
 import 'package:intl/intl.dart';
 
 class Home extends StatefulWidget {
-  const Home({super.key});
+  const Home({Key? key});
 
   @override
   State<Home> createState() => _HomeState();
@@ -14,6 +17,73 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   List<Habit> habits = [];
+  int _currentIndex = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    fetchHabits();
+  }
+
+  Future<void> fetchHabits() async {
+    try {
+      //habitsCollection is the collection in firestore where habits are stored
+      QuerySnapshot snapshot =
+          await FirebaseFirestore.instance.collection("habitsCollection").get();
+      setState(() {
+        habits = snapshot.docs
+            .map((doc) =>
+                Habit.fromMap(doc.id, doc.data() as Map<String, dynamic>))
+            .toList();
+      });
+    } catch (e) {
+      print("error fetching habits: $e");
+    }
+  }
+
+  Future<void> deleteHabit(String habitId) async {
+    try {
+      await FirebaseFirestore.instance
+          .collection("habitsCollection")
+          .doc(habitId)
+          .delete();
+      print("Habit deleted successfully");
+    } catch (e) {
+      print("Error deleting habit: $e");
+    }
+  }
+
+  void _onTabTapped(int index) {
+    setState(() {
+      _currentIndex = index;
+    });
+    switch (_currentIndex) {
+      case 1:
+        // Navigate to April screen
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => CommunityScreen()),
+        );
+        break;
+      case 2:
+        // Navigate to 2024 screen
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => CommunityScreen()),
+        );
+        break;
+      case 3:
+        // Navigate to Community screen
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => const ChallengesPage()),
+        );
+        break;
+      default:
+      // Do nothing for other items
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -115,9 +185,8 @@ class _HomeState extends State<Home> {
           unselectedItemColor: Colors.black.withOpacity(.60),
           selectedFontSize: 14,
           unselectedFontSize: 14,
-          onTap: (value) {
-            // Respond to item press.
-          },
+          onTap: _onTabTapped,
+          currentIndex: _currentIndex,
           items: const [
             BottomNavigationBarItem(
               label: "Home",
@@ -128,8 +197,8 @@ class _HomeState extends State<Home> {
               icon: Icon(Icons.calendar_view_month),
             ),
             BottomNavigationBarItem(
-              label: "2024",
-              icon: Icon(Icons.calendar_view_day_rounded),
+              label: "Read",
+              icon: Icon(Icons.read_more),
             ),
             BottomNavigationBarItem(
               label: "Community",
@@ -150,24 +219,24 @@ class _HomeState extends State<Home> {
                   ),
                   Spacer(), // Adds a flexible space between "Habit" and days
                   Text(
-                    "sat \n27",
+                    "sat \n04",
                     style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                   ),
                   SizedBox(width: 10),
                   Text(
-                    "sun \n28",
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                  ),
-                  SizedBox(width: 10),
-
-                  Text(
-                    "mon \n29",
+                    "sun \n05",
                     style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                   ),
                   SizedBox(width: 10),
 
                   Text(
-                    "tue \n30",
+                    "mon \n06",
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                  ),
+                  SizedBox(width: 10),
+
+                  Text(
+                    "tue \n07",
                     style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                   ),
                   SizedBox(width: 10),
@@ -181,23 +250,43 @@ class _HomeState extends State<Home> {
               height: 50,
             ),
             habits.isEmpty
-                ? Text(
+                ? const Text(
                     "There are no habits yet.... \ntap the + button to add few",
                     style: TextStyle(fontSize: 18),
                     // textAlign: TextAlign.center,
                   )
                 : Expanded(
-                    child: ListView.builder(
-                      itemCount: habits.length,
-                      itemBuilder: (context, index) {
-                        Habit habit = habits[index];
-                        return ListTile(
-                          title: Text(habit.name),
-                          subtitle: Text(
-                            "Motivation: ${habit.motivation}\nDays per Week: ${habit.daysPerWeek}\nStart Date: ${DateFormat('yyyy-MM-dd').format(habit.startDate)}",
-                          ),
-                        );
-                      },
+                    child: Container(
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(12),
+                          color: Colors.white,
+                          boxShadow: [
+                            BoxShadow(
+                                color: Colors.grey.withOpacity(0.5),
+                                spreadRadius: 5,
+                                blurRadius: 7,
+                                offset: Offset(0, 3))
+                          ]),
+                      child: ListView.builder(
+                        itemCount: habits.length,
+                        itemBuilder: (context, index) {
+                          Habit habit = habits[index];
+                          return ListTile(
+                            trailing: IconButton(
+                                onPressed: () {
+                                  deleteHabit(habit.id);
+                                  setState(() {
+                                    habits.removeAt(index);
+                                  });
+                                },
+                                icon: const Icon(Icons.delete)),
+                            title: Text(habit.name),
+                            subtitle: Text(
+                              "Motivation: ${habit.motivation}\nDays per Week: ${habit.daysPerWeek}\nStart Date: ${DateFormat('yyyy-MM-dd').format(habit.startDate)}",
+                            ),
+                          );
+                        },
+                      ),
                     ),
                   ),
           ],

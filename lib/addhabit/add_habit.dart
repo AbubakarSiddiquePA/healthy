@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:healthy/modelclasshabit/addhabit_model.dart';
 import 'package:healthy/reminders/reminders.dart';
@@ -19,10 +20,15 @@ class _AddPageState extends State<AddPage> {
 
   void _saveHabit() {
     Habit newHabit = Habit(
+        id: "",
         name: _nameController.text,
         motivation: _motivationController.text,
         daysPerWeek: _daysPerWeek,
         startDate: _startDate);
+    FirebaseFirestore.instance
+        .collection("habitsCollection")
+        .add(newHabit.toMap());
+
     Navigator.pop(context, newHabit);
   }
 
