@@ -2,10 +2,11 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:healthy/addhabit/add_habit.dart';
+import 'package:healthy/aprilpage/april.dart';
 import 'package:healthy/authentication/signin/signin.dart';
 import 'package:healthy/challenges/const%20challenges/Challenges.dart';
-import 'package:healthy/community/community.dart';
 import 'package:healthy/modelclasshabit/addhabit_model.dart';
+import 'package:healthy/read/read.dart';
 import 'package:intl/intl.dart';
 
 class Home extends StatefulWidget {
@@ -62,14 +63,14 @@ class _HomeState extends State<Home> {
         // Navigate to April screen
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => CommunityScreen()),
+          MaterialPageRoute(builder: (context) => AprilCalender()),
         );
         break;
       case 2:
         // Navigate to 2024 screen
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => CommunityScreen()),
+          MaterialPageRoute(builder: (context) => BookListScreen()),
         );
         break;
       case 3:
@@ -282,7 +283,7 @@ class _HomeState extends State<Home> {
                                 icon: const Icon(Icons.delete)),
                             title: Text(habit.name),
                             subtitle: Text(
-                              "Motivation: ${habit.motivation}\nDays per Week: ${habit.daysPerWeek}\nStart Date: ${DateFormat('yyyy-MM-dd').format(habit.startDate)}",
+                              "Motivation: ${habit.motivation}\nDays per Week: ${habit.daysPerWeek}\nStart Date: ${DateFormat('yyyy-MMM-dd').format(habit.startDate)}",
                             ),
                           );
                         },

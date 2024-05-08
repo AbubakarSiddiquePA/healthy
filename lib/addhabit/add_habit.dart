@@ -5,39 +5,35 @@ import 'package:healthy/reminders/reminders.dart';
 import 'package:intl/intl.dart';
 
 class AddPage extends StatefulWidget {
-  const AddPage({super.key});
+  const AddPage({Key? key}) : super(key: key);
 
   @override
   State<AddPage> createState() => _AddPageState();
 }
 
 class _AddPageState extends State<AddPage> {
-  @override
-  void initState() {
-    super.initState();
-    _startDate = DateTime.now();
-  }
-
-  void _saveHabit() {
-    Habit newHabit = Habit(
-        id: "",
-        name: _nameController.text,
-        motivation: _motivationController.text,
-        daysPerWeek: _daysPerWeek,
-        startDate: _startDate);
-    FirebaseFirestore.instance
-        .collection("habitsCollection")
-        .add(newHabit.toMap());
-
-    Navigator.pop(context, newHabit);
-  }
-
-  // final _formKey = GlobalKey<FormState>();
+  final _formKey = GlobalKey<FormState>();
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _motivationController = TextEditingController();
   int _daysPerWeek = 1;
   DateTime _startDate = DateTime.now();
-  // bool _reminder = false;
+
+  void _saveHabit() {
+    if (_formKey.currentState!.validate()) {
+      Habit newHabit = Habit(
+        id: "",
+        name: _nameController.text,
+        motivation: _motivationController.text,
+        daysPerWeek: _daysPerWeek,
+        startDate: _startDate,
+      );
+      FirebaseFirestore.instance
+          .collection("habitsCollection")
+          .add(newHabit.toMap());
+
+      Navigator.pop(context, newHabit);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -54,19 +50,19 @@ class _AddPageState extends State<AddPage> {
         child: Padding(
           padding: const EdgeInsets.all(16.00),
           child: Form(
+            key: _formKey,
             child: Column(
-              // mainAxisAlignment: MainAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.start,
               children: <Widget>[
-                const Row(
-                  children: [
-                    Text("Name"),
-                  ],
+                const Text(
+                  "Habit Name",
                 ),
                 TextFormField(
+                  decoration: InputDecoration(border: OutlineInputBorder()),
                   controller: _nameController,
                   validator: (value) {
                     if (value!.isEmpty) {
-                      return "please enter a name";
+                      return "Please enter a name";
                     }
                     return null;
                   },
@@ -74,42 +70,38 @@ class _AddPageState extends State<AddPage> {
                 const SizedBox(
                   height: 20,
                 ),
-                const Row(
-                  children: [
-                    Text("Motivate yourself "),
-                    Icon(
-                      Icons.favorite,
-                      color: Colors.red,
-                    ),
-                  ],
-                ),
+                const Text("Motivate yourself "),
                 TextFormField(
+                  decoration: InputDecoration(border: OutlineInputBorder()),
                   controller: _motivationController,
+                  validator: (value) {
+                    if (value!.isEmpty) {
+                      return "Please enter a motivation";
+                    }
+                    return null;
+                  },
                 ),
                 const SizedBox(
                   height: 20,
                 ),
                 const Text(
                     "How many days per week you should complete the habit"),
-                Row(
-                  children: [
-                    DropdownButton<int>(
-                      value: _daysPerWeek,
-                      onChanged: (value) {
-                        setState(() {
-                          _daysPerWeek =
-                              value!; // Assign the new value to _daysPerWeek
-                        });
-                      },
-                      items: List.generate(
-                        7,
-                        (index) {
-                          return DropdownMenuItem(
-                              value: index + 1, child: Text("${index + 1}"));
-                        },
-                      ),
-                    ),
-                  ],
+                DropdownButton<int>(
+                  value: _daysPerWeek,
+                  onChanged: (value) {
+                    setState(() {
+                      _daysPerWeek = value!;
+                    });
+                  },
+                  items: List.generate(
+                    7,
+                    (index) {
+                      return DropdownMenuItem(
+                        value: index + 1,
+                        child: Text("${index + 1}"),
+                      );
+                    },
+                  ),
                 ),
                 const SizedBox(height: 20),
                 Row(
@@ -133,7 +125,8 @@ class _AddPageState extends State<AddPage> {
                         }
                       },
                       child: Text(
-                          "Selected Date: ${DateFormat('yyyy-MM-dd').format(_startDate)}"),
+                        "Selected Date: ${DateFormat('yyyy-MMM-dd').format(_startDate)}",
+                      ),
                     ),
                   ],
                 ),
@@ -145,24 +138,27 @@ class _AddPageState extends State<AddPage> {
                     GestureDetector(
                       onTap: () {
                         Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => const ReminderPage(),
-                            ));
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const ReminderPage(),
+                          ),
+                        );
                       },
                       child: Container(
                         decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(10.0),
-                            border: Border.all(
-                              color: const Color.fromARGB(255, 202, 199, 199),
-                            )),
+                          borderRadius: BorderRadius.circular(10.0),
+                          border: Border.all(
+                            color: const Color.fromARGB(255, 202, 199, 199),
+                          ),
+                        ),
                         width: 150,
                         height: 40,
                         child: const Center(
-                            child: Text(
-                          ' 🔔Reminders',
-                          style: TextStyle(fontSize: 18, color: Colors.black),
-                        )),
+                          child: Text(
+                            ' 🔔Reminders',
+                            style: TextStyle(fontSize: 18, color: Colors.black),
+                          ),
+                        ),
                       ),
                     ),
                   ],
