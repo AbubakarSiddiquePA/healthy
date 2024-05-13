@@ -3,6 +3,8 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:healthy/authentication/signin/signin.dart';
 import 'package:healthy/homescreen/home.dart';
+import 'package:healthy/providers/loginprovider/loginform_provider.dart';
+import 'package:provider/provider.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -13,7 +15,14 @@ void main() async {
     messagingSenderId: "764846460901",
     projectId: "healthy-a9610",
   ));
-  runApp(const MyApp());
+  runApp(
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider<LoginFormState>(create: (_) => LoginFormState()),
+      ],
+      child: const MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
