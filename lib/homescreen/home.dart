@@ -1,11 +1,17 @@
+import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flashy_tab_bar2/flashy_tab_bar2.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:healthy/addhabit/add_habit.dart';
 import 'package:healthy/aprilpage/april.dart';
 import 'package:healthy/authentication/signin/signin.dart';
 import 'package:healthy/challenges/const%20challenges/Challenges.dart';
-import 'package:healthy/modelclasshabit/addhabit_model.dart';
+import 'package:healthy/const/homestyle.dart';
+import 'package:healthy/const/tabbarstyle.dart';
+import 'package:healthy/habitmodelclass/habit_model.dart';
 import 'package:healthy/read/read.dart';
 import 'package:intl/intl.dart';
 
@@ -18,7 +24,19 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   List<Habit> habits = [];
-  int _currentIndex = 0;
+  // int _currentIndex = 0;
+  int _selectedIndex = 0;
+
+  // List<Widget> tabItems = [
+  //   Center(
+  //       child: Text(
+  //     "Home",
+  //     style: TabBarStyles.textsStyle,
+  //   )),
+  //   const Center(child: Text("Calender")),
+  //   const Center(child: Text("Read")),
+  //   const Center(child: Text("Community")),
+  // ];
 
   @override
   void initState() {
@@ -54,61 +72,42 @@ class _HomeState extends State<Home> {
     }
   }
 
-  void _onTabTapped(int index) {
-    setState(() {
-      _currentIndex = index;
-    });
-    switch (_currentIndex) {
-      case 1:
-        // Navigate to April screen
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => AprilCalender()),
-        );
-        break;
-      case 2:
-        // Navigate to 2024 screen
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => BookListScreen()),
-        );
-        break;
-      case 3:
-        // Navigate to Community screen
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => const ChallengesPage()),
-        );
-        break;
-      default:
-      // Do nothing for other items
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
+        backgroundColor: Colors.white,
         appBar: AppBar(
-          title: const Text("Habits > future"),
+          title: const Text(
+            "Healthy",
+            style: TextStyle(color: Colors.grey),
+          ),
           actions: [
-            IconButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const AddPage(),
-                  ),
-                ).then((newHabit) {
-                  if (newHabit != null) {
-                    setState(() {
-                      habits.add(newHabit);
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Container(
+                decoration: BoxDecoration(
+                    color: Colors.limeAccent[400],
+                    borderRadius: BorderRadius.circular(15)),
+                child: IconButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const AddPage(),
+                      ),
+                    ).then((newHabit) {
+                      if (newHabit != null) {
+                        setState(() {
+                          habits.add(newHabit);
+                        });
+                      }
                     });
-                  }
-                });
-              },
-              icon: const Icon(Icons.add),
-              iconSize: 28,
+                  },
+                  icon: const Icon(color: Colors.white, Icons.add),
+                  iconSize: 28,
+                ),
+              ),
             ),
           ],
         ),
@@ -122,7 +121,7 @@ class _HomeState extends State<Home> {
                 ),
                 child: Text(
                   'Health',
-                  style: TextStyle(color: Colors.white),
+                  style: HomeStyle.textsStylehome,
                 ),
               ),
               ListTile(
@@ -179,76 +178,131 @@ class _HomeState extends State<Home> {
             ],
           ),
         ),
-        bottomNavigationBar: BottomNavigationBar(
-          type: BottomNavigationBarType.fixed,
-          backgroundColor: Colors.white,
-          selectedItemColor: Colors.black,
-          unselectedItemColor: Colors.black.withOpacity(.60),
-          selectedFontSize: 14,
-          unselectedFontSize: 14,
-          onTap: _onTabTapped,
-          currentIndex: _currentIndex,
-          items: const [
-            BottomNavigationBarItem(
-              label: "Home",
-              icon: Icon(Icons.home),
+        bottomNavigationBar: FlashyTabBar(
+          backgroundColor: Colors.black,
+          animationCurve: Curves.linear,
+          selectedIndex: _selectedIndex,
+          iconSize: 30,
+          showElevation: false,
+          onItemSelected: (Index) => setState(() {
+            _selectedIndex = Index;
+            switch (_selectedIndex) {
+              case 1:
+                // Navigate to April screen
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => const AprilCalender()),
+                );
+                break;
+              case 2:
+                // Navigate to 2024 screen
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => BookListScreen()),
+                );
+                break;
+              case 3:
+                // Navigate to Community screen
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => const ChallengesPage()),
+                );
+                break;
+              default:
+              // Do nothing for other items
+            }
+          }),
+          items: [
+            FlashyTabBarItem(
+              icon: const Icon(Icons.home),
+              title: Text(
+                'Home',
+                style: TabBarStyles.textsStyle,
+              ),
             ),
-            BottomNavigationBarItem(
-              label: "April",
-              icon: Icon(Icons.calendar_view_month),
+            FlashyTabBarItem(
+              icon: const Icon(Icons.calendar_view_month),
+              title: Text(
+                'Calender',
+                style: TabBarStyles.textsStyle,
+              ),
             ),
-            BottomNavigationBarItem(
-              label: "Read",
-              icon: Icon(Icons.read_more),
+            FlashyTabBarItem(
+              icon: const Icon(Icons.read_more),
+              title: Text(
+                'Read',
+                style: TabBarStyles.textsStyle,
+              ),
             ),
-            BottomNavigationBarItem(
-              label: "Community",
-              icon: Icon(Icons.chat),
+            FlashyTabBarItem(
+              icon: const Icon(Icons.chat),
+              title: Text(
+                'Community',
+                style: TabBarStyles.textsStyle,
+              ),
             ),
           ],
         ),
         body: Column(
           children: [
-            const Padding(
-              padding: EdgeInsets.all(16.0),
+            Padding(
+              padding: const EdgeInsets.all(16.0),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text(
-                    "Habit",
-                    style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
+                  Container(
+                      decoration: BoxDecoration(
+                          color: Colors.black,
+                          borderRadius: BorderRadius.circular(25)),
+                      margin: const EdgeInsets.all(10),
+                      height: 80,
+                      width: 80,
+                      child: ClipOval(
+                        child: Image.asset("images/giphy.gif"),
+                      )),
+                  const Spacer(), // Adds a flexible space between "Habit" and days
+                  _buildDateText("Sun", 12),
+                  const SizedBox(
+                    width: 4,
                   ),
-                  Spacer(), // Adds a flexible space between "Habit" and days
-                  Text(
-                    "sat \n04",
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                  _buildDateText("Mon", 13),
+                  const SizedBox(
+                    width: 4,
                   ),
-                  SizedBox(width: 10),
-                  Text(
-                    "sun \n05",
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                  _buildDateText("tue", 14),
+                  const SizedBox(
+                    width: 4,
                   ),
-                  SizedBox(width: 10),
+                  _buildDateText("Th", 15),
+                  const SizedBox(
+                    width: 4,
+                  ),
+                  _buildDateText("Fri", 16),
 
-                  Text(
-                    "mon \n06",
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                  ),
-                  SizedBox(width: 10),
-
-                  Text(
-                    "tue \n07",
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                  ),
-                  SizedBox(width: 10),
+                  const SizedBox(width: 4),
                 ],
               ),
             ),
             const SizedBox(
               height: 50,
             ),
-            const SizedBox(
-              height: 50,
+            AnimatedTextKit(
+              animatedTexts: [
+                TypewriterAnimatedText(
+                  'Your habits define your future',
+                  textStyle: const TextStyle(
+                    fontSize: 24.0,
+                    fontWeight: FontWeight.bold,
+                  ),
+                  speed: const Duration(milliseconds: 100),
+                ),
+              ],
+              // totalRepeatCount: 0,
+              pause: const Duration(seconds: 2),
+              displayFullTextOnTap: true,
+              stopPauseOnTap: true,
             ),
             habits.isEmpty
                 ? const Text(
@@ -258,41 +312,177 @@ class _HomeState extends State<Home> {
                   )
                 : Expanded(
                     child: Container(
+                      margin: const EdgeInsets.all(8.0),
+                      padding: const EdgeInsets.all(12.0),
                       decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(12),
-                          color: Colors.white,
-                          boxShadow: [
-                            BoxShadow(
-                                color: Colors.grey.withOpacity(0.5),
-                                spreadRadius: 5,
-                                blurRadius: 7,
-                                offset: Offset(0, 3))
-                          ]),
+                        borderRadius: BorderRadius.circular(15),
+                        color: Colors.white,
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.grey.withOpacity(0.5),
+                            spreadRadius: 5,
+                            blurRadius: 10,
+                            offset: const Offset(0, 4),
+                          )
+                        ],
+                      ),
                       child: ListView.builder(
                         itemCount: habits.length,
                         itemBuilder: (context, index) {
                           Habit habit = habits[index];
-                          return ListTile(
-                            trailing: IconButton(
+                          return Card(
+                            color: Colors.limeAccent[400],
+                            margin: const EdgeInsets.symmetric(
+                                vertical: 8.0, horizontal: 5.0),
+                            elevation: 3,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: ListTile(
+                              trailing: IconButton(
                                 onPressed: () {
                                   deleteHabit(habit.id);
                                   setState(() {
                                     habits.removeAt(index);
                                   });
                                 },
-                                icon: const Icon(Icons.delete)),
-                            title: Text(habit.name),
-                            subtitle: Text(
-                              "Motivation: ${habit.motivation}\nDays per Week: ${habit.daysPerWeek}\nStart Date: ${DateFormat('yyyy-MMM-dd').format(habit.startDate)}",
+                                icon: const Icon(Icons.delete,
+                                    color: Colors.redAccent),
+                              ),
+                              title: Row(
+                                children: [
+                                  Icon(Icons.favorite),
+                                  SizedBox(
+                                    width: 5,
+                                  ),
+                                  Container(
+                                    child: Text(
+                                      habit.name,
+                                      style: const TextStyle(
+                                        letterSpacing: 10,
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                    decoration: BoxDecoration(
+                                      border: Border(
+                                        bottom: BorderSide(
+                                          color: Colors.white,
+                                          width: 2.0,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              subtitle: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Padding(
+                                        padding: const EdgeInsets.all(8.0),
+                                        child: Text(
+                                          "Motivation:",
+                                          style: HomeStyle.textsStylecard,
+                                        ),
+                                      ),
+                                      Card(
+                                        child: Padding(
+                                          padding: const EdgeInsets.all(8.0),
+                                          child: Flexible(
+                                            child: Text(habit.motivation,
+                                                style:
+                                                    HomeStyle.textsStylecard),
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Text(
+                                          "Days per Week:",
+                                          style: HomeStyle.textsStylecard,
+                                        ),
+                                        Card(
+                                          child: Padding(
+                                            padding: const EdgeInsets.all(8.0),
+                                            child: Text(
+                                              "${habit.daysPerWeek}",
+                                              style: HomeStyle.textsStylecard,
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Text(
+                                          "Start Date:",
+                                          style: HomeStyle.textsStylecard,
+                                        ),
+                                        Card(
+                                          child: Padding(
+                                            padding: const EdgeInsets.all(8.0),
+                                            child: Text(
+                                              "${DateFormat('yyyy-MMM-dd').format(habit.startDate)}",
+                                              style: HomeStyle.textsStylecard,
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              contentPadding: const EdgeInsets.all(10.0),
                             ),
                           );
                         },
                       ),
                     ),
-                  ),
+                  )
           ],
         ),
       ),
     );
   }
+}
+
+Widget _buildDateText(String day, int date) {
+  return Container(
+    padding: const EdgeInsets.all(8.0),
+    decoration: BoxDecoration(
+        color: Colors.limeAccent[400],
+        borderRadius: BorderRadius.circular(8),
+        boxShadow: [
+          BoxShadow(
+              color: Colors.grey.withOpacity(0.5),
+              spreadRadius: 2,
+              blurRadius: 5,
+              offset: const Offset(0, 3))
+        ]),
+    child: Column(
+      children: [
+        Text(day, style: HomeStyle.textsStyleh),
+        const SizedBox(
+          height: 4,
+        ),
+        Text(date.toString(), style: HomeStyle.textsStyleh),
+      ],
+    ),
+  );
 }

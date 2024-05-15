@@ -3,7 +3,8 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:healthy/authentication/signin/signin.dart';
 import 'package:healthy/homescreen/home.dart';
-import 'package:healthy/providers/loginprovider/loginform_provider.dart';
+import 'package:healthy/providers/authprovider/authprovider.dart';
+import 'package:healthy/providers/authprovider/habitprovider/addhabitprovider.dart';
 import 'package:provider/provider.dart';
 
 void main() async {
@@ -19,6 +20,8 @@ void main() async {
     MultiProvider(
       providers: [
         ChangeNotifierProvider<LoginFormState>(create: (_) => LoginFormState()),
+        ChangeNotifierProvider<AddHabitProvider>(
+            create: (_) => AddHabitProvider()),
       ],
       child: const MyApp(),
     ),
