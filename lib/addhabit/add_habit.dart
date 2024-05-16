@@ -204,9 +204,18 @@ class _AddPageState extends State<AddPage> {
                                 vertical: 10, horizontal: 16),
                             // width: 150,
                             // height: 40,
-                            child: const Text(
-                              ' 🔔 Reminders',
-                              style: HomeStyle.textsStyleh,
+                            child: Row(
+                              children: [
+                                Icon(
+                                    size: 28,
+                                    color: Colors.limeAccent[400],
+                                    Icons.alarm),
+                                SizedBox(width: 5),
+                                const Text(
+                                  'Reminders',
+                                  style: HomeStyle.textsStyleh,
+                                ),
+                              ],
                             ),
                           ),
                         ),

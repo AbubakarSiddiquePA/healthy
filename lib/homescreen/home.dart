@@ -339,37 +339,34 @@ class _HomeState extends State<Home> {
                               borderRadius: BorderRadius.circular(12),
                             ),
                             child: ListTile(
-                              trailing: IconButton(
-                                onPressed: () {
-                                  deleteHabit(habit.id);
-                                  setState(() {
-                                    habits.removeAt(index);
-                                  });
-                                },
-                                icon: const Icon(Icons.delete,
-                                    color: Colors.redAccent),
-                              ),
                               title: Row(
                                 children: [
-                                  Icon(Icons.favorite),
-                                  SizedBox(
+                                  Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: const Icon(Icons.favorite),
+                                  ),
+                                  const SizedBox(
                                     width: 5,
                                   ),
-                                  Container(
-                                    child: Text(
-                                      habit.name,
-                                      style: const TextStyle(
-                                        letterSpacing: 10,
-                                        fontSize: 18,
-                                        fontWeight: FontWeight.bold,
-                                        color: Colors.white,
+                                  Expanded(
+                                    child: Container(
+                                      decoration: const BoxDecoration(
+                                        border: Border(
+                                          bottom: BorderSide(
+                                            color: Colors.white,
+                                            width: 2.0,
+                                          ),
+                                        ),
                                       ),
-                                    ),
-                                    decoration: BoxDecoration(
-                                      border: Border(
-                                        bottom: BorderSide(
+                                      child: Text(
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
+                                        habit.name,
+                                        style: const TextStyle(
+                                          letterSpacing: 3,
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.bold,
                                           color: Colors.white,
-                                          width: 2.0,
                                         ),
                                       ),
                                     ),
@@ -390,14 +387,17 @@ class _HomeState extends State<Home> {
                                           style: HomeStyle.textsStylecard,
                                         ),
                                       ),
-                                      Card(
+                                      Flexible(
                                         child: Padding(
                                           padding: const EdgeInsets.all(8.0),
-                                          child: Flexible(
-                                            child: Text(habit.motivation,
-                                                style:
-                                                    HomeStyle.textsStylecard),
-                                          ),
+                                          child: Text(
+                                              maxLines: 1,
+                                              overflow: TextOverflow.ellipsis,
+                                              habit.motivation,
+                                              style: TextStyle(
+                                                  fontSize: 16,
+                                                  fontWeight: FontWeight.bold,
+                                                  color: Colors.grey)),
                                         ),
                                       ),
                                     ],
@@ -408,7 +408,7 @@ class _HomeState extends State<Home> {
                                       mainAxisAlignment:
                                           MainAxisAlignment.spaceBetween,
                                       children: [
-                                        Text(
+                                        const Text(
                                           "Days per Week:",
                                           style: HomeStyle.textsStylecard,
                                         ),
@@ -430,7 +430,7 @@ class _HomeState extends State<Home> {
                                       mainAxisAlignment:
                                           MainAxisAlignment.spaceBetween,
                                       children: [
-                                        Text(
+                                        const Text(
                                           "Start Date:",
                                           style: HomeStyle.textsStylecard,
                                         ),
@@ -445,6 +445,16 @@ class _HomeState extends State<Home> {
                                         ),
                                       ],
                                     ),
+                                  ),
+                                  IconButton(
+                                    onPressed: () {
+                                      deleteHabit(habit.id);
+                                      setState(() {
+                                        habits.removeAt(index);
+                                      });
+                                    },
+                                    icon: const Icon(Icons.delete,
+                                        color: Colors.redAccent),
                                   ),
                                 ],
                               ),
