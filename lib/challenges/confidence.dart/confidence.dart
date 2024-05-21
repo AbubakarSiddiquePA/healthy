@@ -10,7 +10,7 @@ class confidence extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        actions: [
+        actions: const [
           Text(
             "Confidence",
             style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
@@ -24,18 +24,18 @@ class confidence extends StatelessWidget {
         children: [
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 50, horizontal: 100),
-            child: Container(
+            child: SizedBox(
+              width: 500,
+              height: 150,
               child: Image.asset(
                 "images/confident2.jpeg",
                 width: 400,
                 height: 300,
               ),
-              width: 500,
-              height: 150,
             ),
           ),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 50),
+          const Padding(
+            padding: EdgeInsets.symmetric(horizontal: 50),
             child: Text(
               "Confidence it's somthing you create. it's the feeling of certaintly that you can accomplish everything .",
               style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
@@ -52,9 +52,9 @@ class confidence extends StatelessWidget {
                       Navigator.of(context).push(MaterialPageRoute(
                           builder: (ctx) => confidenceChallange()));
                     },
-                    icon: Icon(Icons.arrow_forward_ios_rounded)),
+                    icon: const Icon(Icons.arrow_forward_ios_rounded)),
               ),
-              SizedBox(
+              const SizedBox(
                 width: 20,
               )
             ],

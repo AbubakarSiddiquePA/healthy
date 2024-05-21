@@ -36,8 +36,7 @@ class ChallengesPage extends StatelessWidget {
               // ),
               kheight10,
               Expanded(
-                  child:
-                      SingleChildScrollView(child: challengeitemss(context))),
+                  child: SingleChildScrollView(child: challengeItems(context))),
             ],
           )),
     );

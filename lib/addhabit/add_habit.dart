@@ -13,141 +13,104 @@ class AddPage extends StatefulWidget {
 }
 
 class _AddPageState extends State<AddPage> {
-  // final _formKey = GlobalKey<FormState>();
-  // final TextEditingController _nameController = TextEditingController();
-  // final TextEditingController _motivationController = TextEditingController();
-  // int _daysPerWeek = 1;
-  // DateTime _startDate = DateTime.now();
+  final _formKey = GlobalKey<FormState>();
 
-  // void _saveHabit() {
-  //   if (_formKey.currentState!.validate()) {
-  //     Habit newHabit = Habit(
-  //       id: "",
-  //       name: _nameController.text,
-  //       motivation: _motivationController.text,
-  //       daysPerWeek: _daysPerWeek,
-  //       startDate: _startDate,
-  //     );
-  //     FirebaseFirestore.instance
-  //         .collection("habitsCollection")
-  //         .add(newHabit.toMap());
-
-  //     Navigator.pop(context, newHabit);
-  //   }
-  // }
+  List<int> selectedDays = [];
+  DateTime startDate = DateTime.now();
 
   @override
   Widget build(BuildContext context) {
     return Consumer<AddHabitProvider>(builder: (context, addhabitprovider, _) {
       return Scaffold(
-          appBar: AppBar(
-            actions: [
-              TextButton(
-                onPressed: () {
-                  if (addhabitprovider.habitNameController.text.isEmpty ||
-                      addhabitprovider.motivationNameController.text.isEmpty) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text(
-                          "Please fill all the fields",
-                          style: TextStyle(fontSize: 16, color: Colors.red),
+        appBar: AppBar(
+          actions: [
+            TextButton(
+              onPressed: () {
+                if (addhabitprovider.habitNameController.text.isEmpty ||
+                    addhabitprovider.motivationNameController.text.isEmpty) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text(
+                        "Please fill all the fields",
+                        style: TextStyle(fontSize: 16, color: Colors.red),
+                      ),
+                    ),
+                  );
+                } else {
+                  Provider.of<AddHabitProvider>(context, listen: false)
+                      .saveHabit(context);
+                }
+              },
+              child: Text(
+                "Save",
+                style: TextStyle(color: Colors.limeAccent[400]),
+              ),
+            ),
+          ],
+        ),
+        body: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Form(
+              key: _formKey,
+              child: Column(
+                children: <Widget>[
+                  TextFormField(
+                    controller: addhabitprovider.habitNameController,
+                    autovalidateMode: AutovalidateMode.always,
+                    decoration: InputDecoration(
+                      labelText: "Habit Name",
+                      labelStyle: const TextStyle(),
+                      suffixIcon: const Icon(Icons.favorite),
+                      suffixIconColor: Colors.limeAccent[400],
+                      hintText: "Eg:- Go to Gym",
+                      border: const OutlineInputBorder(),
+                    ),
+                    onChanged: (value) => addhabitprovider.setHabitName(value),
+                  ),
+                  const SizedBox(height: 20),
+                  TextFormField(
+                    controller: addhabitprovider.motivationNameController,
+                    decoration: InputDecoration(
+                      labelText: "Motivate yourself",
+                      suffixIcon: const Icon(Icons.sports_gymnastics),
+                      suffixIconColor: Colors.limeAccent[400],
+                      hintText: "Write something that motivates you",
+                      border: const OutlineInputBorder(),
+                    ),
+                    onChanged: (value) => addhabitprovider.setMotivation(value),
+                  ),
+                  const SizedBox(height: 20),
+                  Column(
+                    children: [
+                      const Padding(
+                        padding: EdgeInsets.all(16.0),
+                        child: Text(
+                          "How many days per week you should complete the habit",
+                          style: HomeStyle.textsStyleh,
                         ),
                       ),
-                    );
-                  } else {
-                    Provider.of<AddHabitProvider>(context, listen: false)
-                        .saveHabit(context);
-                    addhabitprovider.habitNameController.clear();
-                    addhabitprovider.motivationNameController.clear();
-                  }
-                },
-                child: Text(
-                  "Save",
-                  style: TextStyle(color: Colors.limeAccent[400]),
-                ),
-              ),
-            ],
-          ),
-          body: SingleChildScrollView(
-            child: Padding(
-              padding: const EdgeInsets.all(16.00),
-              child: Form(
-                child: Column(
-                  // mainAxisAlignment: MainAxisAlignment.start,
-                  children: <Widget>[
-                    TextFormField(
-                      controller: addhabitprovider.habitNameController,
-                      autovalidateMode: AutovalidateMode.always,
-                      decoration: InputDecoration(
-                          labelText: "Habit Name",
-                          labelStyle: const TextStyle(),
-                          suffixIcon: const Icon(Icons.favorite),
-                          suffixIconColor: Colors.limeAccent[400],
-                          hintText: "Eg:- Go to Gym",
-                          border: const OutlineInputBorder()),
-                      onChanged: (value) =>
-                          addhabitprovider.setHabitName(value),
-                    ),
-                    const SizedBox(height: 20),
-                    TextFormField(
-                      controller: addhabitprovider.motivationNameController,
-                      decoration: InputDecoration(
-                          labelText: "Motivate yourself",
-                          suffixIcon: const Icon(Icons.sports_gymnastics),
-                          suffixIconColor: Colors.limeAccent[400],
-                          hintText: "Write something that motivates you",
-                          border: const OutlineInputBorder()),
-                      onChanged: (value) =>
-                          addhabitprovider.setMotivation(value),
-                    ),
-                    const SizedBox(height: 20),
-                    Row(
-                      children: [
-                        const Expanded(
-                          child: Text(
-                            "How many days per week you should complete the habit",
-                            style: HomeStyle.textsStyleh,
-                          ),
-                        ),
-                        DropdownButton<int>(
-                          value: addhabitprovider.daysPerWeek,
-                          onChanged: (value) =>
-                              addhabitprovider.setDaysPerWeek(value!),
-                          items: List.generate(
-                            7,
-                            (index) {
-                              return DropdownMenuItem(
-                                value: index + 1,
-                                child: Text(
-                                  "${index + 1}",
-                                  style: HomeStyle.textsStyleh,
-                                ),
-                              );
-                            },
-                          ),
+                      MultiSelectChip(
+                        initialValue: addhabitprovider.daysPerWeek,
+                        onSelectionChanged: (selectedDays) {
+                          addhabitprovider.setDaysPerWeek(selectedDays);
+                        },
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 20),
+                  Row(
+                    children: [
+                      const Padding(
+                        padding: EdgeInsets.all(16.0),
+                        child: Text(
+                          "Select Start Date",
                           style: HomeStyle.textsStyleh,
-                          icon: Icon(
-                            Icons.arrow_drop_down,
-                            color: Colors.limeAccent[400],
-                          ),
-                          underline: Container(
-                            height: 1,
-                            color: Colors.limeAccent[400],
-                          ),
                         ),
-                      ],
-                    ),
-                    const SizedBox(height: 20),
-                    Row(
-                      children: [
-                        const Expanded(
-                          child: Text(
-                            "Start Date",
-                            style: HomeStyle.textsStyleh,
-                          ),
-                        ),
-                        const SizedBox(width: 20),
-                        ElevatedButton(
+                      ),
+                      const SizedBox(width: 20),
+                      Expanded(
+                        child: ElevatedButton(
                           onPressed: () async {
                             final DateTime? picked = await showDatePicker(
                               context: context,
@@ -179,193 +142,101 @@ class _AddPageState extends State<AddPage> {
                             ),
                           ),
                         ),
-                      ],
-                    ),
-                    const SizedBox(height: 20),
-                    Row(
-                      children: [
-                        GestureDetector(
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => const ReminderPage(),
-                              ),
-                            );
-                          },
-                          child: Container(
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(10.0),
-                              border: Border.all(
-                                color: Colors.limeAccent[400] ?? Colors.grey,
-                              ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 20),
+                  Row(
+                    children: [
+                      GestureDetector(
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => const ReminderPage(),
                             ),
-                            padding: const EdgeInsets.symmetric(
-                                vertical: 10, horizontal: 16),
-                            // width: 150,
-                            // height: 40,
-                            child: Row(
-                              children: [
-                                Icon(
-                                    size: 28,
-                                    color: Colors.limeAccent[400],
-                                    Icons.alarm),
-                                SizedBox(width: 5),
-                                const Text(
-                                  'Reminders',
-                                  style: HomeStyle.textsStyleh,
-                                ),
-                              ],
+                          );
+                        },
+                        child: Container(
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(10.0),
+                            border: Border.all(
+                              color: Colors.limeAccent[400] ?? Colors.grey,
                             ),
                           ),
+                          padding: const EdgeInsets.symmetric(
+                              vertical: 10, horizontal: 16),
+                          child: Row(
+                            children: [
+                              Icon(
+                                  size: 28,
+                                  color: Colors.limeAccent[400],
+                                  Icons.alarm),
+                              const SizedBox(width: 5),
+                              const Text(
+                                'Reminders',
+                                style: HomeStyle.textsStyleh,
+                              ),
+                            ],
+                          ),
                         ),
-                      ],
-                    ),
-                    const SizedBox(height: 20),
-                  ],
-                ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 20),
+                ],
               ),
             ),
-          ));
+          ),
+        ),
+      );
     });
   }
-//   @override
-//   Widget build(BuildContext context) {
-//     return Scaffold(
-//       appBar: AppBar(
-//         actions: [
-//           TextButton(
-//             onPressed: _saveHabit,
-//             child: const Text("Save"),
-//           ),
-//         ],
-//       ),
-//       body: SingleChildScrollView(
-//         child: Padding(
-//           padding: const EdgeInsets.all(16.00),
-//           child: Form(
-//             key: _formKey,
-//             child: Column(
-//               mainAxisAlignment: MainAxisAlignment.start,
-//               children: <Widget>[
-//                 const Text(
-//                   "Habit Name",
-//                 ),
-//                 TextFormField(
-//                   decoration:
-//                       const InputDecoration(border: OutlineInputBorder()),
-//                   controller: _nameController,
-//                   validator: (value) {
-//                     if (value!.isEmpty) {
-//                       return "Please enter a name";
-//                     }
-//                     return null;
-//                   },
-//                 ),
-//                 const SizedBox(
-//                   height: 20,
-//                 ),
-//                 const Text("Motivate yourself "),
-//                 TextFormField(
-//                   decoration:
-//                       const InputDecoration(border: OutlineInputBorder()),
-//                   controller: _motivationController,
-//                   validator: (value) {
-//                     if (value!.isEmpty) {
-//                       return "Please enter a motivation";
-//                     }
-//                     return null;
-//                   },
-//                 ),
-//                 const SizedBox(
-//                   height: 20,
-//                 ),
-//                 const Text(
-//                     "How many days per week you should complete the habit"),
-//                 DropdownButton<int>(
-//                   value: _daysPerWeek,
-//                   onChanged: (value) {
-//                     setState(() {
-//                       _daysPerWeek = value!;
-//                     });
-//                   },
-//                   items: List.generate(
-//                     7,
-//                     (index) {
-//                       return DropdownMenuItem(
-//                         value: index + 1,
-//                         child: Text("${index + 1}"),
-//                       );
-//                     },
-//                   ),
-//                 ),
-//                 const SizedBox(height: 20),
-//                 Row(
-//                   children: [
-//                     const Text("Start Date"),
-//                     const SizedBox(
-//                       width: 20,
-//                     ),
-//                     ElevatedButton(
-//                       onPressed: () async {
-//                         final DateTime? picked = await showDatePicker(
-//                           context: context,
-//                           initialDate: _startDate,
-//                           firstDate: DateTime(2024),
-//                           lastDate: DateTime(2025),
-//                         );
-//                         if (picked != null && picked != _startDate) {
-//                           setState(() {
-//                             _startDate = picked;
-//                           });
-//                         }
-//                       },
-//                       child: Text(
-//                         "Selected Date: ${DateFormat('yyyy-MMM-dd').format(_startDate)}",
-//                       ),
-//                     ),
-//                   ],
-//                 ),
-//                 const SizedBox(
-//                   height: 20,
-//                 ),
-//                 Row(
-//                   children: [
-//                     GestureDetector(
-//                       onTap: () {
-//                         Navigator.push(
-//                           context,
-//                           MaterialPageRoute(
-//                             builder: (context) => const ReminderPage(),
-//                           ),
-//                         );
-//                       },
-//                       child: Container(
-//                         decoration: BoxDecoration(
-//                           borderRadius: BorderRadius.circular(10.0),
-//                           border: Border.all(
-//                             color: const Color.fromARGB(255, 202, 199, 199),
-//                           ),
-//                         ),
-//                         width: 150,
-//                         height: 40,
-//                         child: const Center(
-//                           child: Text(
-//                             ' 🔔Reminders',
-//                             style: TextStyle(fontSize: 18, color: Colors.black),
-//                           ),
-//                         ),
-//                       ),
-//                     ),
-//                   ],
-//                 ),
-//                 const SizedBox(
-//                   height: 20,
-//                 ),
-//               ],
-//             ),
-//           ),
-//         ),
-//       ),
-//     );
+}
+
+class MultiSelectChip extends StatefulWidget {
+  final List<int> initialValue;
+  final Function(List<int>) onSelectionChanged;
+
+  MultiSelectChip({
+    required this.initialValue,
+    required this.onSelectionChanged,
+  });
+
+  @override
+  _MultiSelectChipState createState() => _MultiSelectChipState();
+}
+
+class _MultiSelectChipState extends State<MultiSelectChip> {
+  List<int> selectedChoices = [];
+
+  @override
+  void initState() {
+    selectedChoices = widget.initialValue;
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    List<Widget> choices = [];
+    for (int i = 1; i <= 7; i++) {
+      choices.add(
+        ChoiceChip(
+          label: Text(i.toString()),
+          selected: selectedChoices.contains(i),
+          onSelected: (selected) {
+            setState(() {
+              selectedChoices.contains(i)
+                  ? selectedChoices.remove(i)
+                  : selectedChoices.add(i);
+            });
+            widget.onSelectionChanged(selectedChoices);
+          },
+        ),
+      );
+    }
+    return Wrap(
+      children: choices,
+    );
+  }
 }

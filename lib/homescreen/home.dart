@@ -2,9 +2,7 @@ import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flashy_tab_bar2/flashy_tab_bar2.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:healthy/addhabit/add_habit.dart';
 import 'package:healthy/aprilpage/april.dart';
 import 'package:healthy/authentication/signin/signin.dart';
@@ -12,7 +10,10 @@ import 'package:healthy/challenges/const%20challenges/Challenges.dart';
 import 'package:healthy/const/homestyle.dart';
 import 'package:healthy/const/tabbarstyle.dart';
 import 'package:healthy/habitmodelclass/habit_model.dart';
+import 'package:healthy/models/reminder_model.dart';
 import 'package:healthy/read/read.dart';
+import 'package:healthy/reminders/add_reminder.dart';
+import 'package:healthy/reminders/reminders.dart';
 import 'package:intl/intl.dart';
 
 class Home extends StatefulWidget {
@@ -24,19 +25,8 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   List<Habit> habits = [];
-  // int _currentIndex = 0;
-  int _selectedIndex = 0;
 
-  // List<Widget> tabItems = [
-  //   Center(
-  //       child: Text(
-  //     "Home",
-  //     style: TabBarStyles.textsStyle,
-  //   )),
-  //   const Center(child: Text("Calender")),
-  //   const Center(child: Text("Read")),
-  //   const Center(child: Text("Community")),
-  // ];
+  int _selectedIndex = 0;
 
   @override
   void initState() {
@@ -46,17 +36,16 @@ class _HomeState extends State<Home> {
 
   Future<void> fetchHabits() async {
     try {
-      //habitsCollection is the collection in firestore where habits are stored
       QuerySnapshot snapshot =
           await FirebaseFirestore.instance.collection("habitsCollection").get();
       setState(() {
         habits = snapshot.docs
             .map((doc) =>
-                Habit.fromMap(doc.id, doc.data() as Map<String, dynamic>))
+                Habit.fromMap(doc.data() as Map<String, dynamic>, doc.id))
             .toList();
       });
     } catch (e) {
-      print("error fetching habits: $e");
+      print("Error fetching habits: $e");
     }
   }
 
@@ -66,6 +55,9 @@ class _HomeState extends State<Home> {
           .collection("habitsCollection")
           .doc(habitId)
           .delete();
+      setState(() {
+        habits.removeWhere((habit) => habit.id == habitId);
+      });
       print("Habit deleted successfully");
     } catch (e) {
       print("Error deleting habit: $e");
@@ -188,22 +180,23 @@ class _HomeState extends State<Home> {
             _selectedIndex = Index;
             switch (_selectedIndex) {
               case 1:
-                // Navigate to April screen
+                // Navigator.push(
+                //   context,
+                //   MaterialPageRoute(
+                //       builder: (context) => const AprilCalender()),
+                // );
                 Navigator.push(
                   context,
-                  MaterialPageRoute(
-                      builder: (context) => const AprilCalender()),
+                  MaterialPageRoute(builder: (context) => const ReminderPage()),
                 );
                 break;
               case 2:
-                // Navigate to 2024 screen
                 Navigator.push(
                   context,
                   MaterialPageRoute(builder: (context) => BookListScreen()),
                 );
                 break;
               case 3:
-                // Navigate to Community screen
                 Navigator.push(
                   context,
                   MaterialPageRoute(
@@ -211,7 +204,6 @@ class _HomeState extends State<Home> {
                 );
                 break;
               default:
-              // Do nothing for other items
             }
           }),
           items: [
@@ -223,9 +215,9 @@ class _HomeState extends State<Home> {
               ),
             ),
             FlashyTabBarItem(
-              icon: const Icon(Icons.calendar_view_month),
+              icon: const Icon(Icons.alarm),
               title: Text(
-                'Calender',
+                '''Reminder's''',
                 style: TabBarStyles.textsStyle,
               ),
             ),
@@ -262,32 +254,19 @@ class _HomeState extends State<Home> {
                       child: ClipOval(
                         child: Image.asset("images/giphy.gif"),
                       )),
-                  const Spacer(), // Adds a flexible space between "Habit" and days
-                  _buildDateText("Sun", 12),
-                  const SizedBox(
-                    width: 4,
-                  ),
-                  _buildDateText("Mon", 13),
-                  const SizedBox(
-                    width: 4,
-                  ),
-                  _buildDateText("tue", 14),
-                  const SizedBox(
-                    width: 4,
-                  ),
-                  _buildDateText("Th", 15),
-                  const SizedBox(
-                    width: 4,
-                  ),
-                  _buildDateText("Fri", 16),
-
+                  const Spacer(),
                   const SizedBox(width: 4),
+                  _buildDateText("Wed", 15),
+                  const SizedBox(width: 4),
+                  _buildDateText("Thu", 16),
+                  const SizedBox(width: 4),
+                  _buildDateText("Fri", 17),
+                  const SizedBox(width: 4),
+                  _buildDateText("Sat", 18),
                 ],
               ),
             ),
-            const SizedBox(
-              height: 50,
-            ),
+            const SizedBox(height: 50),
             AnimatedTextKit(
               animatedTexts: [
                 TypewriterAnimatedText(
@@ -299,7 +278,6 @@ class _HomeState extends State<Home> {
                   speed: const Duration(milliseconds: 100),
                 ),
               ],
-              // totalRepeatCount: 0,
               pause: const Duration(seconds: 2),
               displayFullTextOnTap: true,
               stopPauseOnTap: true,
@@ -308,7 +286,6 @@ class _HomeState extends State<Home> {
                 ? const Text(
                     "There are no habits yet.... \ntap the + button to add few",
                     style: TextStyle(fontSize: 18),
-                    // textAlign: TextAlign.center,
                   )
                 : Expanded(
                     child: Container(
@@ -341,13 +318,11 @@ class _HomeState extends State<Home> {
                             child: ListTile(
                               title: Row(
                                 children: [
-                                  Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: const Icon(Icons.favorite),
+                                  const Padding(
+                                    padding: EdgeInsets.all(8.0),
+                                    child: Icon(Icons.favorite),
                                   ),
-                                  const SizedBox(
-                                    width: 5,
-                                  ),
+                                  const SizedBox(width: 5),
                                   Expanded(
                                     child: Container(
                                       decoration: const BoxDecoration(
@@ -380,8 +355,8 @@ class _HomeState extends State<Home> {
                                     mainAxisAlignment:
                                         MainAxisAlignment.spaceBetween,
                                     children: [
-                                      Padding(
-                                        padding: const EdgeInsets.all(8.0),
+                                      const Padding(
+                                        padding: EdgeInsets.all(8.0),
                                         child: Text(
                                           "Motivation:",
                                           style: HomeStyle.textsStylecard,
@@ -394,7 +369,7 @@ class _HomeState extends State<Home> {
                                               maxLines: 1,
                                               overflow: TextOverflow.ellipsis,
                                               habit.motivation,
-                                              style: TextStyle(
+                                              style: const TextStyle(
                                                   fontSize: 16,
                                                   fontWeight: FontWeight.bold,
                                                   color: Colors.grey)),
@@ -416,7 +391,7 @@ class _HomeState extends State<Home> {
                                           child: Padding(
                                             padding: const EdgeInsets.all(8.0),
                                             child: Text(
-                                              "${habit.daysPerWeek}",
+                                              habit.daysPerWeek.join(', '),
                                               style: HomeStyle.textsStylecard,
                                             ),
                                           ),
@@ -446,15 +421,35 @@ class _HomeState extends State<Home> {
                                       ],
                                     ),
                                   ),
-                                  IconButton(
-                                    onPressed: () {
-                                      deleteHabit(habit.id);
-                                      setState(() {
-                                        habits.removeAt(index);
-                                      });
-                                    },
-                                    icon: const Icon(Icons.delete,
-                                        color: Colors.redAccent),
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      IconButton(
+                                        onPressed: () {
+                                          deleteHabit(habit.id);
+                                          setState(() {
+                                            habits.removeAt(index);
+                                          });
+                                        },
+                                        icon: const CircleAvatar(
+                                          child: Icon(Icons.delete,
+                                              color: Colors.redAccent),
+                                        ),
+                                      ),
+                                      TextButton(
+                                          onPressed: () {
+                                            Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      const AddReminder(),
+                                                ));
+                                          },
+                                          child: const Text(
+                                              style: TextStyle(fontSize: 16),
+                                              "Set Reminder"))
+                                    ],
                                   ),
                                 ],
                               ),

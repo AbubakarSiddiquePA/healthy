@@ -5,6 +5,7 @@ import 'package:healthy/authentication/signin/signin.dart';
 import 'package:healthy/homescreen/home.dart';
 import 'package:healthy/providers/authprovider/authprovider.dart';
 import 'package:healthy/providers/authprovider/habitprovider/addhabitprovider.dart';
+import 'package:healthy/providers/reminderprovider/reminder_provider.dart';
 import 'package:provider/provider.dart';
 
 void main() async {
@@ -22,6 +23,7 @@ void main() async {
         ChangeNotifierProvider<LoginFormState>(create: (_) => LoginFormState()),
         ChangeNotifierProvider<AddHabitProvider>(
             create: (_) => AddHabitProvider()),
+        ChangeNotifierProvider(create: (_) => ReminderProvider()),
       ],
       child: const MyApp(),
     ),

@@ -1,44 +1,55 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_datetime_picker_plus/flutter_datetime_picker_plus.dart';
+import 'package:healthy/providers/reminderprovider/reminder_provider.dart';
+import 'package:provider/provider.dart';
+import 'package:healthy/models/reminder_model.dart';
 
-class AddReminder extends StatefulWidget {
+class AddReminder extends StatelessWidget {
   const AddReminder({super.key});
 
   @override
-  State<AddReminder> createState() => _AddReminderState();
+  Widget build(BuildContext context) {
+    return ChangeNotifierProvider(
+      create: (_) => ReminderProvider(),
+      child: const AddReminderForm(),
+    );
+  }
 }
 
-class _AddReminderState extends State<AddReminder> {
-  final _formKey = GlobalKey<FormState>();
-  final TextEditingController _titleController = TextEditingController();
-  final TextEditingController _reminderController = TextEditingController();
+class AddReminderForm extends StatefulWidget {
+  const AddReminderForm({super.key});
 
-  // Time selection state management
-  DateTime? _selectedTime;
-  List<bool> _selectedWeekdays =
-      List.filled(7, false); // Initialize all days to false
+  @override
+  State<AddReminderForm> createState() => _AddReminderFormState();
+}
+
+class _AddReminderFormState extends State<AddReminderForm> {
+  final _formKey = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
+    final reminderProvider =
+        Provider.of<ReminderProvider>(context, listen: false);
+
     return Scaffold(
       appBar: AppBar(
         title: const Text("Add Reminder"),
         actions: [
           TextButton(
             onPressed: () {
-              // Validate form and handle reminder creation logic
-              if (_formKey.currentState!.validate()) {
-                // Implement logic to save reminder with time and weekdays
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text('Reminder created!'),
-                  ),
+              if (_formKey.currentState!.validate() &&
+                  reminderProvider.validateTime() &&
+                  reminderProvider.validateWeekdays()) {
+                final newReminder = Reminder(
+                  title: reminderProvider.titleController.text,
+                  message: reminderProvider.reminderController.text,
+                  time: reminderProvider.selectedTime!,
+                  weekdays: reminderProvider.selectedWeekdays,
+                  id: '',
                 );
-                // Clear form fields after successful creation
-                _titleController.clear();
-                _reminderController.clear();
-                _selectedTime = null;
-                _selectedWeekdays = List.filled(7, false);
+                Navigator.pop(context, newReminder);
+
+                reminderProvider.reset();
               }
             },
             child: const Text("Save"),
@@ -52,66 +63,101 @@ class _AddReminderState extends State<AddReminder> {
             key: _formKey,
             child: Column(
               children: <Widget>[
-                const Row(
-                  children: [
-                    Text("Reminder Title"),
-                  ],
-                ),
-                TextFormField(
-                  controller: _titleController,
-                  validator: (value) {
-                    if (value!.isEmpty) {
-                      return "Please enter a title";
-                    }
-                    return null;
-                  },
-                ),
-                const SizedBox(
-                  height: 20,
-                ),
-                const Row(
-                  children: [
-                    Text("Reminder Message "),
-                  ],
-                ),
-                TextFormField(
-                  controller: _reminderController,
-                ),
-                const SizedBox(
-                  height: 20,
-                ),
-                // Time selection button
-                TextButton(
-                  onPressed: () {
-                    DatePicker.showTimePicker(
-                      context,
-                      showSecondsColumn: true,
-
-                      // onDateSelected: (date) {
-                      //   setState(() {
-                      //     _selectedTime = date;
-                      //   });
-                      // },
+                Consumer<ReminderProvider>(
+                  builder: (context, reminderProvider, child) {
+                    return TextFormField(
+                      decoration: InputDecoration(
+                        labelText: "Reminder Name",
+                        labelStyle: const TextStyle(),
+                        suffixIcon: const Icon(Icons.title),
+                        suffixIconColor: Colors.limeAccent[400],
+                        hintText: "Set Reminder Name",
+                        border: const OutlineInputBorder(),
+                      ),
+                      controller: reminderProvider.titleController,
+                      validator: (value) {
+                        if (value!.isEmpty) {
+                          return "Please enter a title";
+                        }
+                        return null;
+                      },
                     );
                   },
-                  child: const Row(
-                    children: [
-                      Text("Select Time: "),
-                      // Text(_selectedTime?.format(context) ?? 'No time selected'), // Display selected time or default message
-                    ],
+                ),
+                const SizedBox(height: 20),
+                Consumer<ReminderProvider>(
+                  builder: (context, reminderProvider, child) {
+                    return TextFormField(
+                      decoration: InputDecoration(
+                        labelText: "Reminder Message",
+                        labelStyle: const TextStyle(),
+                        suffixIcon: const Icon(Icons.message),
+                        suffixIconColor: Colors.limeAccent[400],
+                        hintText: "Set Reminder Message",
+                        border: const OutlineInputBorder(),
+                      ),
+                      controller: reminderProvider.reminderController,
+                      validator: (value) {
+                        if (value!.isEmpty) {
+                          return "Please enter a message";
+                        }
+                        return null;
+                      },
+                    );
+                  },
+                ),
+                const SizedBox(height: 20),
+                Consumer<ReminderProvider>(
+                  builder: (context, reminderProvider, child) {
+                    return TextButton(
+                      onPressed: () {
+                        DatePicker.showTimePicker(
+                          context,
+                          showSecondsColumn: false,
+                          onConfirm: (date) {
+                            reminderProvider.setSelectedTime(date);
+                          },
+                        );
+                      },
+                      child: Row(
+                        children: [
+                          const Text("Select Time: "),
+                          Text(reminderProvider.getFormattedTime()),
+                        ],
+                      ),
+                    );
+                  },
+                ),
+                Consumer<ReminderProvider>(
+                  builder: (context, reminderProvider, child) {
+                    if (!reminderProvider.validateTime()) {
+                      return const Text(
+                        "Please select a time",
+                        style: TextStyle(color: Colors.red),
+                      );
+                    }
+                    return const SizedBox.shrink();
+                  },
+                ),
+                const SizedBox(height: 20),
+                const Text("Repeat on Weekdays: "),
+                const SizedBox(height: 10),
+                Wrap(
+                  children: List.generate(
+                    7,
+                    (index) => _buildWeekdayCheckbox(context, index),
                   ),
                 ),
-                const SizedBox(
-                  height: 20,
-                ),
-                const Text("Repeat on Weekdays: "),
-                const SizedBox(
-                  height: 10,
-                ),
-                Wrap(
-                  // Wrap for better layout on small screens
-                  children:
-                      List.generate(7, (index) => _buildWeekdayCheckbox(index)),
+                Consumer<ReminderProvider>(
+                  builder: (context, reminderProvider, child) {
+                    if (!reminderProvider.validateWeekdays()) {
+                      return const Text(
+                        "Please select at least one weekday",
+                        style: TextStyle(color: Colors.red),
+                      );
+                    }
+                    return const SizedBox.shrink();
+                  },
                 ),
               ],
             ),
@@ -121,16 +167,17 @@ class _AddReminderState extends State<AddReminder> {
     );
   }
 
-  // Function to build weekday checkbox
-  Widget _buildWeekdayCheckbox(int weekdayIndex) {
+  Widget _buildWeekdayCheckbox(BuildContext context, int weekdayIndex) {
     final weekdays = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
-    return CheckboxListTile(
-      title: Text(weekdays[weekdayIndex]),
-      value: _selectedWeekdays[weekdayIndex],
-      onChanged: (bool? value) {
-        setState(() {
-          _selectedWeekdays[weekdayIndex] = value!;
-        });
+    return Consumer<ReminderProvider>(
+      builder: (context, provider, child) {
+        return CheckboxListTile(
+          title: Text(weekdays[weekdayIndex]),
+          value: provider.selectedWeekdays[weekdayIndex],
+          onChanged: (bool? value) {
+            provider.toggleWeekday(weekdayIndex, value!);
+          },
+        );
       },
     );
   }

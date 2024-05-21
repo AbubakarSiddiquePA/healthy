@@ -1,9 +1,24 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:healthy/challenges/const%20challenges/const.dart';
 import 'package:healthy/challenges/selflovee.dart/selflvchat.dart';
 
 class SelfLove extends StatelessWidget {
   const SelfLove({super.key});
+
+  Future<void> sendJoinRequest() async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      await FirebaseFirestore.instance.collection("joinRequests").add({
+        "email": user.email,
+        "timestamp": FieldValue.serverTimestamp(),
+      });
+    } else {
+      // ignore: avoid_print
+      print("no user is signned in");
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -54,7 +69,8 @@ class SelfLove extends StatelessWidget {
                       fontSize: 15),
                 ),
               ),
-              IconButton(onPressed: () {}, icon: const Icon(Icons.add)),
+              IconButton(
+                  onPressed: sendJoinRequest, icon: const Icon(Icons.add)),
               CircleAvatar(
                 backgroundColor: const Color.fromARGB(255, 225, 222, 222),
                 child: IconButton(
