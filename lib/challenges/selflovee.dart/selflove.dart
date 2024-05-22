@@ -1,22 +1,66 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:healthy/challenges/const%20challenges/const.dart';
 import 'package:healthy/challenges/selflovee.dart/selflvchat.dart';
 
-class SelfLove extends StatelessWidget {
-  const SelfLove({super.key});
+class Group extends StatefulWidget {
+  final String groupId;
+
+  const Group({super.key, required this.groupId});
+
+  @override
+  _GroupState createState() => _GroupState();
+}
+
+class _GroupState extends State<Group> {
+  bool _isRequestSent = false;
+  bool _isRequestApproved = false;
+  String _groupName = '';
+
+  @override
+  void initState() {
+    super.initState();
+    checkJoinRequestStatus();
+  }
+
+  Future<void> checkJoinRequestStatus() async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      final requestSnapshot = await FirebaseFirestore.instance
+          .collection('joinRequests')
+          .where('email', isEqualTo: user.email)
+          .where('groupId', isEqualTo: widget.groupId)
+          .get();
+
+      if (requestSnapshot.docs.isNotEmpty) {
+        final request = requestSnapshot.docs.first;
+        final status = request['status'] == 'approved';
+        setState(() {
+          _isRequestSent = true;
+          _isRequestApproved = status;
+        });
+      }
+    }
+  }
 
   Future<void> sendJoinRequest() async {
     final user = FirebaseAuth.instance.currentUser;
     if (user != null) {
-      await FirebaseFirestore.instance.collection("joinRequests").add({
-        "email": user.email,
-        "timestamp": FieldValue.serverTimestamp(),
-      });
+      try {
+        await FirebaseFirestore.instance.collection("joinRequests").add({
+          "email": user.email,
+          "groupId": widget.groupId,
+          "status": "pending",
+          "timestamp": FieldValue.serverTimestamp(),
+        });
+        setState(() {
+          _isRequestSent = true;
+        });
+      } catch (e) {
+        print("Failed to send join request: $e");
+      }
     } else {
-      // ignore: avoid_print
-      print("no user is signned in");
+      print("No user is signed in");
     }
   }
 
@@ -24,68 +68,158 @@ class SelfLove extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        actions: const [
-          Text(
-            "Self Love Group",
-            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
-          ),
-          SizedBox(
-            width: 20,
-          )
-        ],
+        title: StreamBuilder<DocumentSnapshot>(
+          stream: FirebaseFirestore.instance
+              .collection('groups')
+              .doc(widget.groupId)
+              .snapshots(),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Text('Loading...');
+            }
+            if (snapshot.hasError) {
+              return const Text('Error');
+            }
+            if (!snapshot.hasData || !snapshot.data!.exists) {
+              return const Text('Group not found');
+            }
+            final group = snapshot.data!;
+            _groupName = group['name'];
+            return Text(
+              _groupName,
+              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+            );
+          },
+        ),
       ),
-      body: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 50, horizontal: 100),
-            child: SizedBox(
-              width: 500,
-              height: 150,
-              child: Image.asset(
-                "images/loveeee.jpeg",
-                width: 400,
-                height: 300,
-              ),
-            ),
-          ),
-          const Padding(
-            padding: EdgeInsets.symmetric(horizontal: 50),
-            child: Text(
-              "There’s only ONE person that has ability to make you happy.. and it’s YOU.this self-love challenge will boost your confidence and self-steem,and i hope you start treating yourself better.",
-              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
-            ),
-          ),
-          kheight20,
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              const Padding(
-                padding: EdgeInsets.all(16.0),
-                child: Text(
-                  "Send request to \n join group",
-                  style: TextStyle(
-                      color: Colors.blue,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 15),
+      body: StreamBuilder<DocumentSnapshot>(
+        stream: FirebaseFirestore.instance
+            .collection('groups')
+            .doc(widget.groupId)
+            .snapshots(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          }
+          if (snapshot.hasError) {
+            return const Center(child: Text('Error loading group details'));
+          }
+          if (!snapshot.hasData || !snapshot.data!.exists) {
+            return const Center(child: Text('Group not found'));
+          }
+          final group = snapshot.data!;
+          return SingleChildScrollView(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                SizedBox(
+                  width: 500,
+                  height: 150,
+                  child: Image.asset(
+                    "images/loveeee.jpeg",
+                    width: 400,
+                    height: 300,
+                  ),
                 ),
-              ),
-              IconButton(
-                  onPressed: sendJoinRequest, icon: const Icon(Icons.add)),
-              CircleAvatar(
-                backgroundColor: const Color.fromARGB(255, 225, 222, 222),
-                child: IconButton(
-                    onPressed: () {
-                      Navigator.of(context).push(
-                          MaterialPageRoute(builder: (ctx) => SelfLoveChat()));
-                    },
-                    icon: const Icon(Icons.chat)),
-              ),
-              const SizedBox(
-                width: 20,
-              )
-            ],
-          )
-        ],
+                const SizedBox(height: 20),
+                Text(
+                  group['description'],
+                  style: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 20),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                  child: Column(
+                    children: [
+                      Text(
+                        _isRequestSent
+                            ? "Approved Or waiting for approval"
+                            : "Send request to join ${group['name']} group",
+                        style: const TextStyle(
+                          color: Colors.blue,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 15,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                      const Text(
+                        "Please check chat box to ensure weather your In group or not",
+                        style: TextStyle(
+                          color: Colors.red,
+                          fontWeight: FontWeight.w500,
+                          fontSize: 10,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                      const SizedBox(height: 10),
+                      ElevatedButton.icon(
+                        onPressed: _isRequestSent ? null : sendJoinRequest,
+                        icon: Icon(_isRequestSent ? Icons.check : Icons.add),
+                        label: Text(
+                            _isRequestSent ? 'Request Sent' : 'Join Group'),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 20),
+                if (_isRequestSent)
+                  Container(
+                    padding: const EdgeInsets.all(16.0),
+                    decoration: BoxDecoration(
+                      border: Border.all(color: Colors.grey),
+                      borderRadius: BorderRadius.circular(8.0),
+                    ),
+                    child: Column(
+                      children: [
+                        Text(
+                          _isRequestApproved
+                              ? "You are in our $_groupName community. Enjoy chatting!"
+                              : "Request sent, waiting for approval.",
+                          style: TextStyle(
+                            color:
+                                _isRequestApproved ? Colors.blue : Colors.green,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 15,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                        const SizedBox(height: 10),
+                        CircleAvatar(
+                          backgroundColor:
+                              const Color.fromARGB(255, 225, 222, 222),
+                          child: IconButton(
+                            onPressed: _isRequestApproved
+                                ? () {
+                                    Navigator.of(context).push(
+                                      MaterialPageRoute(
+                                        builder: (ctx) => GroupChat(),
+                                      ),
+                                    );
+                                  }
+                                : () {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      const SnackBar(
+                                        backgroundColor: Colors.red,
+                                        content:
+                                            Text('Request not approved yet.'),
+                                      ),
+                                    );
+                                  },
+                            icon: const Icon(Icons.chat),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+              ],
+            ),
+          );
+        },
       ),
     );
   }

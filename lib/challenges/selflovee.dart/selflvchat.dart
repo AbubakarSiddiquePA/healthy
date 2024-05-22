@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 
-class SelfLoveChat extends StatefulWidget {
+class GroupChat extends StatefulWidget {
   @override
-  _SelfLoveChatState createState() => _SelfLoveChatState();
+  _GroupChatState createState() => _GroupChatState();
 }
 
-class _SelfLoveChatState extends State<SelfLoveChat> {
+class _GroupChatState extends State<GroupChat> {
   List<String> messages = [];
   TextEditingController messageController = TextEditingController();
 
@@ -47,13 +47,13 @@ class _SelfLoveChatState extends State<SelfLoveChat> {
                 },
               );
             },
-            icon: Icon(Icons.delete),
+            icon: const Icon(Icons.logout),
           ),
         ],
-        title: const Text('Self Love Group'),
+        title: const Text('Chat Group'),
       ),
       body: Column(
-        children: [
+        children: <Widget>[
           Expanded(
             child: ListView.builder(
               itemCount: messages.length,
@@ -67,20 +67,22 @@ class _SelfLoveChatState extends State<SelfLoveChat> {
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: Row(
-              children: [
+              children: <Widget>[
                 Expanded(
                   child: TextField(
                     controller: messageController,
                     decoration: const InputDecoration(
-                      hintText: 'Type a message...',
+                      hintText: 'Enter your message...',
                     ),
                   ),
                 ),
-                TextButton(
+                IconButton(
+                  icon: const Icon(Icons.send),
                   onPressed: () {
-                    _sendMessage(messageController.text);
+                    if (messageController.text.isNotEmpty) {
+                      _sendMessage(messageController.text);
+                    }
                   },
-                  child: const Text('Send'),
                 ),
               ],
             ),
