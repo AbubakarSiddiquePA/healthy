@@ -1,5 +1,4 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:healthy/models/reminder_model.dart';
 
 class Habit {
   String id;
@@ -7,7 +6,7 @@ class Habit {
   String motivation;
   List<dynamic> daysPerWeek;
   DateTime startDate;
-  List<Reminder> reminders;
+  // List<Reminder> reminders;
 
   Habit({
     required this.id,
@@ -15,7 +14,7 @@ class Habit {
     required this.motivation,
     required this.daysPerWeek,
     required this.startDate,
-    required this.reminders,
+    // required this.reminders,
   });
 
   factory Habit.fromMap(Map<String, dynamic> data, String id) {
@@ -26,10 +25,10 @@ class Habit {
         motivation: data['motivation'] ?? '',
         daysPerWeek: List<dynamic>.from(data['daysPerWeek'] ?? []),
         startDate: (data['startDate'] as Timestamp).toDate(),
-        reminders: (data['reminders'] as List<dynamic>)
-            .map((reminderData) =>
-                Reminder.fromMap(reminderData as Map<String, dynamic>))
-            .toList(),
+        // reminders: (data['reminders'] as List<dynamic>)
+        //     .map((reminderData) =>
+        //         Reminder.fromMap(reminderData as Map<String, dynamic>))
+        //     .toList(),
       );
     } catch (e) {
       print("Error parsing habit from map: $e");
@@ -39,7 +38,7 @@ class Habit {
         motivation: '',
         daysPerWeek: [],
         startDate: DateTime.now(),
-        reminders: [],
+        // reminders: [],
       );
     }
   }
@@ -50,7 +49,7 @@ class Habit {
       'motivation': motivation,
       'daysPerWeek': daysPerWeek,
       'startDate': Timestamp.fromDate(startDate),
-      'reminders': reminders.map((reminder) => reminder.toMap()).toList(),
+      // 'reminders': reminders.map((reminder) => reminder.toMap()).toList(),
     };
   }
 }

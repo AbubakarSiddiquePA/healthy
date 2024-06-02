@@ -1,17 +1,25 @@
 import 'package:flutter/material.dart';
 
+class ChatMessage {
+  final String sender;
+  final String message;
+
+  ChatMessage({required this.sender, required this.message});
+}
+
 class GroupChat extends StatefulWidget {
   @override
   _GroupChatState createState() => _GroupChatState();
 }
 
 class _GroupChatState extends State<GroupChat> {
-  List<String> messages = [];
+  List<ChatMessage> messages = [];
   TextEditingController messageController = TextEditingController();
+  String currentUser = 'User1'; // Change this to simulate different users
 
   void _sendMessage(String message) {
     setState(() {
-      messages.add(message);
+      messages.add(ChatMessage(sender: currentUser, message: message));
     });
     messageController.clear();
   }
@@ -27,16 +35,17 @@ class _GroupChatState extends State<GroupChat> {
                 context: context,
                 builder: (BuildContext context) {
                   return AlertDialog(
-                    title: Text("Are you sure you want to leave the group?"),
+                    title:
+                        const Text("Are you sure you want to leave the group?"),
                     actions: <Widget>[
                       TextButton(
-                        child: Text("No"),
+                        child: const Text("No"),
                         onPressed: () {
                           Navigator.of(context).pop(); // Close the dialog
                         },
                       ),
                       TextButton(
-                        child: Text("Yes"),
+                        child: const Text("Yes"),
                         onPressed: () {
                           // Implement leaving the group logic here
                           Navigator.of(context).pop(); // Close the dialog
@@ -58,8 +67,20 @@ class _GroupChatState extends State<GroupChat> {
             child: ListView.builder(
               itemCount: messages.length,
               itemBuilder: (context, index) {
+                ChatMessage chatMessage = messages[index];
+                bool isCurrentUser = chatMessage.sender == currentUser;
                 return ListTile(
-                  title: Text(messages[index]),
+                  title: Text(
+                    '${chatMessage.sender}: ${chatMessage.message}',
+                    style: TextStyle(
+                      color: isCurrentUser ? Colors.blue : Colors.black,
+                      fontWeight:
+                          isCurrentUser ? FontWeight.bold : FontWeight.normal,
+                    ),
+                  ),
+                  subtitle: isCurrentUser
+                      ? const Text('You', style: TextStyle(color: Colors.blue))
+                      : null,
                 );
               },
             ),

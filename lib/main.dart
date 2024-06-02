@@ -1,3 +1,4 @@
+// import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -5,7 +6,6 @@ import 'package:healthy/authentication/signin/signin.dart';
 import 'package:healthy/homescreen/home.dart';
 import 'package:healthy/providers/authprovider/authprovider.dart';
 import 'package:healthy/providers/authprovider/habitprovider/addhabitprovider.dart';
-import 'package:healthy/providers/reminderprovider/reminder_provider.dart';
 import 'package:provider/provider.dart';
 
 void main() async {
@@ -17,17 +17,25 @@ void main() async {
     messagingSenderId: "764846460901",
     projectId: "healthy-a9610",
   ));
+
   runApp(
     MultiProvider(
       providers: [
         ChangeNotifierProvider<LoginFormState>(create: (_) => LoginFormState()),
         ChangeNotifierProvider<AddHabitProvider>(
             create: (_) => AddHabitProvider()),
-        ChangeNotifierProvider(create: (_) => ReminderProvider()),
+        // ChangeNotifierProvider(create: (_) => ReminderProvider()),
+
+        // ChangeNotifierProvider(create: (_) => ReminderProvider()),
       ],
       child: const MyApp(),
     ),
   );
+  // Check and request notification permissions
+  // bool isAllowed = await AwesomeNotifications().isNotificationAllowed();
+  // if (!isAllowed) {
+  //   await AwesomeNotifications().requestPermissionToSendNotifications();
+  // }
 }
 
 class MyApp extends StatelessWidget {

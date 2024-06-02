@@ -1,29 +1,31 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:healthy/challenges/selflovee.dart/selflove.dart';
+import 'package:healthy/challenges/groups_chat/group_join_page.dart';
 
 Widget buildChallengeCard(
-    BuildContext context, String imageAsset, String title, Function() onTap) {
+    BuildContext context, String imageUrl, String title, Function() onTap) {
   return InkWell(
     onTap: onTap,
     child: Card(
       elevation: 10,
       child: Container(
         decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(18),
-            border: Border.all(width: 1, color: Colors.orange),
-            color: Colors.white),
+          borderRadius: BorderRadius.circular(18),
+          border: Border.all(width: 1, color: Colors.orange),
+          color: Colors.white,
+        ),
         child: Column(
           children: [
             Image.asset(
-              "images/angry.png",
+              imageUrl,
               width: 130,
               height: 90,
+              fit: BoxFit.cover,
             ),
             Text(
               title,
               style: const TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
-            )
+            ),
           ],
         ),
       ),
@@ -52,16 +54,19 @@ Widget challengeItems(BuildContext context) {
         physics: const NeverScrollableScrollPhysics(),
         padding: const EdgeInsets.all(20.0),
         children: groups.map((group) {
+          final data = group.data() as Map<String, dynamic>;
+
+          // Check if 'coverImage' exists and is not null, otherwise use a default image
+          String coverImageUrl =
+              data.containsKey('coverImage') && data['coverImage'].isNotEmpty
+                  ? data['coverImage']
+                  : 'images/alarm.jpeg'; // default image URL
+
           return buildChallengeCard(
             context,
-            "images/images.jpeg",
-            group['name'],
+            coverImageUrl,
+            data['name'],
             () {
-              // Navigator.of(context).push(
-              //   MaterialPageRoute(
-              //     builder: (ctx) => GroupDetailPage(groupId: group.id),
-              //   ),
-              // );
               Navigator.of(context).push(
                 MaterialPageRoute(
                   builder: (ctx) => Group(groupId: group.id),

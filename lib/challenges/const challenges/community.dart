@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:healthy/challenges/const%20challenges/card.dart';
+import 'package:healthy/challenges/const%20challenges/card_community.dart';
 import 'package:healthy/challenges/const%20challenges/const.dart';
 
 class ChallengesPage extends StatelessWidget {
@@ -20,7 +20,7 @@ class ChallengesPage extends StatelessWidget {
                         color: Colors.black),
                     children: [
                   TextSpan(
-                    text: "  Connect with our Community",
+                    text: "  Connect with  our Community",
                   ),
                 ])),
             // title: Text("Your habits will \ndetermine your future"),

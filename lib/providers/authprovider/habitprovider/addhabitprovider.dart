@@ -1,14 +1,13 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:healthy/habitmodelclass/habit_model.dart';
-import 'package:healthy/models/reminder_model.dart';
 
 class AddHabitProvider extends ChangeNotifier {
   String habitName = '';
   String motivation = '';
   List<int> daysPerWeek = [];
   DateTime startDate = DateTime.now();
-  List<Reminder> reminders = [];
+  // List<Reminder> reminders = [];
   List<Habit> habits = [];
   TextEditingController habitNameController = TextEditingController();
   TextEditingController motivationNameController = TextEditingController();
@@ -33,10 +32,10 @@ class AddHabitProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  void addReminder(Reminder reminder) {
-    reminders.add(reminder);
-    notifyListeners();
-  }
+  // void addReminder(Reminder reminder) {
+  //   reminders.add(reminder);
+  //   notifyListeners();
+  // }
 
   void saveHabit(BuildContext context) {
     if (habitName.isEmpty || motivation.isEmpty) return;
@@ -47,7 +46,7 @@ class AddHabitProvider extends ChangeNotifier {
       motivation: motivation,
       daysPerWeek: daysPerWeek,
       startDate: startDate,
-      reminders: reminders,
+      // reminders: reminders,
     );
 
     FirebaseFirestore.instance
@@ -66,7 +65,7 @@ class AddHabitProvider extends ChangeNotifier {
     motivation = '';
     daysPerWeek = [];
     startDate = DateTime.now();
-    reminders = [];
+    // reminders = [];
 
     notifyListeners();
     Navigator.pop(context, newHabit);

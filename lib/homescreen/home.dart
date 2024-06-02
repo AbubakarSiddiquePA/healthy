@@ -3,17 +3,14 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flashy_tab_bar2/flashy_tab_bar2.dart';
 import 'package:flutter/material.dart';
-import 'package:healthy/addhabit/add_habit.dart';
-import 'package:healthy/aprilpage/april.dart';
 import 'package:healthy/authentication/signin/signin.dart';
-import 'package:healthy/challenges/const%20challenges/Challenges.dart';
+import 'package:healthy/challenges/const%20challenges/community.dart';
 import 'package:healthy/const/homestyle.dart';
 import 'package:healthy/const/tabbarstyle.dart';
 import 'package:healthy/habitmodelclass/habit_model.dart';
-import 'package:healthy/models/reminder_model.dart';
 import 'package:healthy/read/read.dart';
-import 'package:healthy/reminders/add_reminder.dart';
-import 'package:healthy/reminders/reminders.dart';
+import 'package:healthy/reminders/rmndr_home.dart';
+
 import 'package:intl/intl.dart';
 
 class Home extends StatefulWidget {
@@ -83,18 +80,18 @@ class _HomeState extends State<Home> {
                     borderRadius: BorderRadius.circular(15)),
                 child: IconButton(
                   onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const AddPage(),
-                      ),
-                    ).then((newHabit) {
-                      if (newHabit != null) {
-                        setState(() {
-                          habits.add(newHabit);
-                        });
-                      }
-                    });
+                    // Navigator.push(
+                    //   context,
+                    //   MaterialPageRoute(
+                    //     builder: (context) => const AddPage(),
+                    //   ),
+                    // ).then((newHabit) {
+                    //   if (newHabit != null) {
+                    //     setState(() {
+                    //       habits.add(newHabit);
+                    //     });
+                    //   }
+                    // });
                   },
                   icon: const Icon(color: Colors.white, Icons.add),
                   iconSize: 28,
@@ -185,9 +182,10 @@ class _HomeState extends State<Home> {
                 //   MaterialPageRoute(
                 //       builder: (context) => const AprilCalender()),
                 // );
+
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => const ReminderPage()),
+                  MaterialPageRoute(builder: (context) => ReminderPage()),
                 );
                 break;
               case 2:
@@ -438,14 +436,7 @@ class _HomeState extends State<Home> {
                                         ),
                                       ),
                                       TextButton(
-                                          onPressed: () {
-                                            Navigator.push(
-                                                context,
-                                                MaterialPageRoute(
-                                                  builder: (context) =>
-                                                      const AddReminder(),
-                                                ));
-                                          },
+                                          onPressed: () {},
                                           child: const Text(
                                               style: TextStyle(fontSize: 16),
                                               "Set Reminder"))
