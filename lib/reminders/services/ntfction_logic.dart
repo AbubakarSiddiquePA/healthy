@@ -7,10 +7,10 @@ import 'package:timezone/data/latest.dart' as tz;
 
 class NotificationLogic {
   static final _notifications = FlutterLocalNotificationsPlugin();
-  static final onNotifications = BehaviorSubject<String>();
+  static final onNotifications = BehaviorSubject<String?>();
 
   static Future _notificationDetails() async {
-    return NotificationDetails(
+    return const NotificationDetails(
       android: AndroidNotificationDetails(
           "Schedule Reminder", "Do not forget to drink water",
           importance: Importance.max, priority: Priority.max),
@@ -27,7 +27,7 @@ class NotificationLogic {
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(
-            builder: (context) => ReminderPage(),
+            builder: (context) => const ReminderPage(),
           ),
         );
         onNotifications.add(payLoad as String);
@@ -43,7 +43,7 @@ class NotificationLogic {
     required DateTime dateTime,
   }) async {
     if (dateTime.isBefore(DateTime.now())) {
-      dateTime = dateTime.add(Duration(days: 1));
+      dateTime = dateTime.add(const Duration(days: 1));
     }
     _notifications.zonedSchedule(id, title, body,
         tz.TZDateTime.from(dateTime, tz.local), await NotificationDetails(),

@@ -37,12 +37,12 @@ addReminder(BuildContext context, String uid) {
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(25),
             ),
-            title: Text("Add Reminder"),
+            title: const Text("Add Reminder"),
             content: SingleChildScrollView(
               child: Column(
                 children: [
-                  Text("Select a Time for Reminder"),
-                  SizedBox(
+                  const Text("Select a Time for Reminder"),
+                  const SizedBox(
                     height: 20,
                   ),
                   MaterialButton(
@@ -58,17 +58,18 @@ addReminder(BuildContext context, String uid) {
                     },
                     child: Row(
                       children: [
-                        FaIcon(
+                        const FaIcon(
                           FontAwesomeIcons.clock,
                           color: Colors.green,
                           size: 40,
                         ),
-                        SizedBox(
+                        const SizedBox(
                           width: 10,
                         ),
                         Text(
                           time.format(context).toString(),
-                          style: TextStyle(color: Colors.green, fontSize: 30),
+                          style: const TextStyle(
+                              color: Colors.green, fontSize: 30),
                         )
                       ],
                     ),
@@ -81,13 +82,13 @@ addReminder(BuildContext context, String uid) {
                   onPressed: () {
                     Navigator.pop(context);
                   },
-                  child: Text("Cancel")),
+                  child: const Text("Cancel")),
               TextButton(
                   onPressed: () {
                     add(uid, time);
                     Navigator.pop(context);
                   },
-                  child: Text("Add")),
+                  child: const Text("Add")),
             ],
           );
         },

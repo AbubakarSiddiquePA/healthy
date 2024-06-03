@@ -50,19 +50,21 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: StreamBuilder(
-          stream: FirebaseAuth.instance.authStateChanges(),
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return const Center(child: CircularProgressIndicator());
-            } else if (snapshot.hasError) {
-              return const Center(child: Text('An error occurred'));
-            } else if (snapshot.hasData) {
-              return const Home();
-            } else {
-              return const LoginForm();
-            }
-          }),
+      home: FirebaseAuth.instance.currentUser != null ? Home() : LoginForm(),
+      // home: StreamBuilder(
+      //     stream: FirebaseAuth.instance.authStateChanges(),
+      //     builder: (context, snapshot) {
+      //       if (snapshot.connectionState == ConnectionState.waiting) {
+      //         return const Center(child: CircularProgressIndicator());
+      //       } else if (snapshot.hasError) {
+      //         return const Center(child: Text('An error occurred'));
+      //       } else if (snapshot.hasData) {
+      //         return const Home();
+      //       } else {
+      //         return const LoginForm();
+      //       }
+      //     }
+      //     ),
     );
   }
 }
