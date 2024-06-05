@@ -3,7 +3,10 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:healthy/challenges/groups_chat/group_join_page.dart';
 
 Widget buildChallengeCard(
-    BuildContext context, String imageUrl, String title, Function() onTap) {
+    BuildContext context,
+    // String imageUrl,
+    String title,
+    Function() onTap) {
   return InkWell(
     onTap: onTap,
     child: Card(
@@ -16,12 +19,19 @@ Widget buildChallengeCard(
         ),
         child: Column(
           children: [
-            Image.asset(
-              imageUrl,
-              width: 130,
-              height: 90,
-              fit: BoxFit.cover,
-            ),
+            // imageUrl.startsWith('http')
+            // Image.network(
+            //   imageUrl,
+            //   width: 90,
+            //   height: 90,
+            //   fit: BoxFit.cover,
+            // ),
+            // : Image.asset(
+            //     "assets/images/loveeee.jpeg",
+            //     width: 90,
+            //     height: 90,
+            //     fit: BoxFit.cover,
+            //   ),
             Text(
               title,
               style: const TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
@@ -57,14 +67,11 @@ Widget challengeItems(BuildContext context) {
           final data = group.data() as Map<String, dynamic>;
 
           // Check if 'coverImage' exists and is not null, otherwise use a default image
-          String coverImageUrl =
-              data.containsKey('coverImage') && data['coverImage'].isNotEmpty
-                  ? data['coverImage']
-                  : 'images/alarm.jpeg'; // default image URL
+          // String coverImageUrl = data['coverImage']; // default image URL
 
           return buildChallengeCard(
             context,
-            coverImageUrl,
+            // coverImageUrl,
             data['name'],
             () {
               Navigator.of(context).push(

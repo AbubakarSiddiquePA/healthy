@@ -1,0 +1,35 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "healthy",
+            "request": "launch",
+            "type": "dart"
+        },
+    
+        {
+            "name":"androidpoco1",
+            "request":"launch",
+            "type": "dart",
+            "deviceId": "f62bdccc0407"
+
+        },
+        {
+            "name":"androidpoco2",
+            "request":"launch",
+            "type": "dart",
+            "deviceId": "d1e1c5ae"
+
+        }
+
+    ],
+    "compounds": [
+        {
+            "name": "All Devices",
+            "configurations": ["androidpoco1","androidpoco2"]
+        }
+    ]
+}

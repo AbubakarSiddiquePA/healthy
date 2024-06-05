@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:healthy/challenges/groups_chat/chat_page.dart';
 
 class Group extends StatefulWidget {
@@ -113,16 +114,19 @@ class _GroupState extends State<Group> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                SizedBox(
+                const SizedBox(
                   width: 500,
                   height: 150,
-                  child: Image.asset(
-                    "images/loveeee.jpeg",
-                    width: 400,
-                    height: 300,
-                  ),
+                  child: Center(
+                      child: CircleAvatar(
+                          child: FaIcon(FontAwesomeIcons.message))),
+                  // child: Image.asset(
+                  //   "images/loveeee.jpeg",
+                  //   width: 400,
+                  //   height: 300,
+                  // ),
                 ),
-                const SizedBox(height: 20),
+                // const SizedBox(height: 20),
                 Text(
                   group['description'],
                   style: const TextStyle(
@@ -148,7 +152,7 @@ class _GroupState extends State<Group> {
                         textAlign: TextAlign.center,
                       ),
                       const Text(
-                        "Please check chat box to ensure weather your In group or not",
+                        "Please check chat box to ensure whether you're in the group or not",
                         style: TextStyle(
                           color: Colors.red,
                           fontWeight: FontWeight.w500,

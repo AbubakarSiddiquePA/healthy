@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'dart:async'; // Add this import
 
 class ChatMessage {
   final String sender;
@@ -15,13 +18,48 @@ class GroupChat extends StatefulWidget {
 class _GroupChatState extends State<GroupChat> {
   List<ChatMessage> messages = [];
   TextEditingController messageController = TextEditingController();
-  String currentUser = 'User1'; // Change this to simulate different users
+  User? currentUser;
+  late StreamSubscription _subscription;
+
+  @override
+  void initState() {
+    super.initState();
+    currentUser = FirebaseAuth.instance.currentUser;
+
+    _subscription = FirebaseFirestore.instance
+        .collection('messages')
+        .orderBy('timestamp', descending: false)
+        .snapshots()
+        .listen((snapshot) {
+      if (mounted) {
+        setState(() {
+          messages = snapshot.docs.map((doc) {
+            return ChatMessage(
+              sender: doc['sender'],
+              message: doc['message'],
+            );
+          }).toList();
+        });
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _subscription.cancel();
+    messageController.dispose();
+    super.dispose();
+  }
 
   void _sendMessage(String message) {
-    setState(() {
-      messages.add(ChatMessage(sender: currentUser, message: message));
-    });
-    messageController.clear();
+    if (message.isNotEmpty && currentUser != null) {
+      FirebaseFirestore.instance.collection('messages').add({
+        'sender': currentUser!.email,
+        'message': message,
+        'timestamp': FieldValue.serverTimestamp(),
+      });
+      messageController.clear();
+    }
   }
 
   @override
@@ -62,25 +100,45 @@ class _GroupChatState extends State<GroupChat> {
         title: const Text('Chat Group'),
       ),
       body: Column(
+        mainAxisAlignment: MainAxisAlignment.end,
         children: <Widget>[
           Expanded(
             child: ListView.builder(
+              reverse: true,
               itemCount: messages.length,
               itemBuilder: (context, index) {
-                ChatMessage chatMessage = messages[index];
-                bool isCurrentUser = chatMessage.sender == currentUser;
+                ChatMessage chatMessage = messages[messages.length - 1 - index];
+                bool isCurrentUser = chatMessage.sender == currentUser!.email;
                 return ListTile(
-                  title: Text(
-                    '${chatMessage.sender}: ${chatMessage.message}',
-                    style: TextStyle(
-                      color: isCurrentUser ? Colors.blue : Colors.black,
-                      fontWeight:
-                          isCurrentUser ? FontWeight.bold : FontWeight.normal,
+                  title: Align(
+                    alignment: isCurrentUser
+                        ? Alignment.centerRight
+                        : Alignment.centerLeft,
+                    child: Container(
+                      padding: const EdgeInsets.all(8.0),
+                      decoration: BoxDecoration(
+                        color: isCurrentUser ? Colors.blue : Colors.grey[300],
+                        borderRadius: BorderRadius.circular(8.0),
+                      ),
+                      child: Text(
+                        chatMessage.message,
+                        style: TextStyle(
+                          color: isCurrentUser ? Colors.white : Colors.black,
+                        ),
+                      ),
                     ),
                   ),
-                  subtitle: isCurrentUser
-                      ? const Text('You', style: TextStyle(color: Colors.blue))
-                      : null,
+                  subtitle: Align(
+                    alignment: isCurrentUser
+                        ? Alignment.centerRight
+                        : Alignment.centerLeft,
+                    child: Text(
+                      isCurrentUser ? 'You' : chatMessage.sender,
+                      style: TextStyle(
+                        color: isCurrentUser ? Colors.blue : Colors.black,
+                      ),
+                    ),
+                  ),
                 );
               },
             ),
@@ -100,9 +158,7 @@ class _GroupChatState extends State<GroupChat> {
                 IconButton(
                   icon: const Icon(Icons.send),
                   onPressed: () {
-                    if (messageController.text.isNotEmpty) {
-                      _sendMessage(messageController.text);
-                    }
+                    _sendMessage(messageController.text);
                   },
                 ),
               ],

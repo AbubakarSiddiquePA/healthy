@@ -10,7 +10,6 @@ class ChallengesPage extends StatelessWidget {
     return SafeArea(
       child: Scaffold(
           appBar: AppBar(
-            // automaticallyImplyLeading: false,
             centerTitle: true,
             title: RichText(
                 text: const TextSpan(
@@ -23,17 +22,9 @@ class ChallengesPage extends StatelessWidget {
                     text: "  Connect with  our Community",
                   ),
                 ])),
-            // title: Text("Your habits will \ndetermine your future"),
           ),
           body: Column(
             children: [
-              // const Padding(
-              //   padding: EdgeInsets.symmetric(vertical: 10),
-              //   child: Text(
-              //     "",
-              //     style: TextStyle( ),
-              //   ),
-              // ),
               kheight10,
               Expanded(
                   child: SingleChildScrollView(child: challengeItems(context))),

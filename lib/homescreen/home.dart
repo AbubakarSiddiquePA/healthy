@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flashy_tab_bar2/flashy_tab_bar2.dart';
 import 'package:flutter/material.dart';
+import 'package:healthy/addhabit/add_habit.dart';
 import 'package:healthy/authentication/signin/signin.dart';
 import 'package:healthy/challenges/const%20challenges/community.dart';
 import 'package:healthy/const/homestyle.dart';
@@ -80,18 +81,18 @@ class _HomeState extends State<Home> {
                     borderRadius: BorderRadius.circular(15)),
                 child: IconButton(
                   onPressed: () {
-                    // Navigator.push(
-                    //   context,
-                    //   MaterialPageRoute(
-                    //     builder: (context) => const AddPage(),
-                    //   ),
-                    // ).then((newHabit) {
-                    //   if (newHabit != null) {
-                    //     setState(() {
-                    //       habits.add(newHabit);
-                    //     });
-                    //   }
-                    // });
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const AddPage(),
+                      ),
+                    ).then((newHabit) {
+                      if (newHabit != null) {
+                        setState(() {
+                          habits.add(newHabit);
+                        });
+                      }
+                    });
                   },
                   icon: const Icon(color: Colors.white, Icons.add),
                   iconSize: 28,
@@ -146,17 +147,17 @@ class _HomeState extends State<Home> {
                     ),
                     IconButton(
                       onPressed: () {
-                        FirebaseAuth.instance.signOut().then((value) {
-                          print("signout");
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => const LoginForm(),
-                              ));
-                          ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                  content: Text("You are logged out")));
-                        });
+                        // FirebaseAuth.instance.signOut().then((value) {
+                        //   print("signout");
+                        //   Navigator.push(
+                        //       context,
+                        //       MaterialPageRoute(
+                        //         builder: (context) => const LoginForm(),
+                        //       ));
+                        //   ScaffoldMessenger.of(context).showSnackBar(
+                        //       const SnackBar(
+                        //           content: Text("You are logged out")));
+                        // });
                       },
                       icon: const Icon(Icons.logout),
                     )
@@ -177,15 +178,9 @@ class _HomeState extends State<Home> {
             _selectedIndex = Index;
             switch (_selectedIndex) {
               case 1:
-                // Navigator.push(
-                //   context,
-                //   MaterialPageRoute(
-                //       builder: (context) => const AprilCalender()),
-                // );
-
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => ReminderPage()),
+                  MaterialPageRoute(builder: (context) => const ReminderPage()),
                 );
                 break;
               case 2:
@@ -250,7 +245,7 @@ class _HomeState extends State<Home> {
                       height: 80,
                       width: 80,
                       child: ClipOval(
-                        child: Image.asset("images/giphy.gif"),
+                        child: Image.asset("images/habit gif.gif"),
                       )),
                   const Spacer(),
                   const SizedBox(width: 4),
@@ -419,28 +414,60 @@ class _HomeState extends State<Home> {
                                       ],
                                     ),
                                   ),
-                                  Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      IconButton(
-                                        onPressed: () {
-                                          deleteHabit(habit.id);
-                                          setState(() {
-                                            habits.removeAt(index);
-                                          });
-                                        },
-                                        icon: const CircleAvatar(
-                                          child: Icon(Icons.delete,
-                                              color: Colors.redAccent),
-                                        ),
+                                  Center(
+                                    child: IconButton(
+                                      onPressed: () {
+                                        showDialog(
+                                          context: context,
+                                          builder: (BuildContext context) {
+                                            return AlertDialog(
+                                              title: const Text(
+                                                  'Are you sure you want to delete this habit?'),
+                                              content: const Text(
+                                                  'This action cannot be undone.'),
+                                              actions: <Widget>[
+                                                TextButton(
+                                                  onPressed: () =>
+                                                      Navigator.pop(context),
+                                                  child: const Text('Cancel'),
+                                                ),
+                                                TextButton(
+                                                  onPressed: () {
+                                                    deleteHabit(habit.id);
+                                                    setState(() {
+                                                      habits.removeAt(index);
+                                                    });
+                                                    Navigator.pop(context);
+                                                  },
+                                                  style: TextButton.styleFrom(
+                                                    // Optional: Red text for "Delete"
+                                                    foregroundColor: Colors.red,
+                                                  ),
+                                                  child: const Text('Delete'),
+                                                ),
+                                              ],
+                                            );
+                                          },
+                                        );
+                                      },
+                                      icon: const CircleAvatar(
+                                        child: Icon(Icons.delete,
+                                            color: Colors.redAccent),
                                       ),
-                                      TextButton(
-                                          onPressed: () {},
-                                          child: const Text(
-                                              style: TextStyle(fontSize: 16),
-                                              "Set Reminder"))
-                                    ],
+                                    ),
+
+                                    // child: IconButton(
+                                    //   onPressed: () {
+                                    //     deleteHabit(habit.id);
+                                    //     setState(() {
+                                    //       habits.removeAt(index);
+                                    //     });
+                                    //   },
+                                    //   icon: const CircleAvatar(
+                                    //     child: Icon(Icons.delete,
+                                    //         color: Colors.redAccent),
+                                    //   ),
+                                    // ),
                                   ),
                                 ],
                               ),

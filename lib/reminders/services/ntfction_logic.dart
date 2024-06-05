@@ -23,14 +23,14 @@ class NotificationLogic {
     final settings = InitializationSettings(android: android);
     await _notifications.initialize(
       settings,
-      onDidReceiveNotificationResponse: (payLoad) {
+      onDidReceiveNotificationResponse: (notificationResponse) {
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(
             builder: (context) => const ReminderPage(),
           ),
         );
-        onNotifications.add(payLoad as String);
+        onNotifications.add(notificationResponse.payload as String?);
       },
     );
   }
@@ -46,10 +46,14 @@ class NotificationLogic {
       dateTime = dateTime.add(const Duration(days: 1));
     }
     _notifications.zonedSchedule(id, title, body,
-        tz.TZDateTime.from(dateTime, tz.local), await NotificationDetails(),
+        tz.TZDateTime.from(dateTime, tz.local), await _notificationDetails(),
         uiLocalNotificationDateInterpretation:
             UILocalNotificationDateInterpretation.absoluteTime,
         androidAllowWhileIdle: true,
         matchDateTimeComponents: DateTimeComponents.time);
+  }
+
+  static Future cancelNotification(int id) async {
+    await _notifications.cancel(id);
   }
 }
