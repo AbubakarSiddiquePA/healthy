@@ -62,6 +62,20 @@ class _HomeState extends State<Home> {
     }
   }
 
+  List<Widget> _buildDateTextWidgets(int days) {
+    List<Widget> dateWidgets = [];
+    DateTime today = DateTime.now();
+
+    for (int i = days; i > 0; i--) {
+      DateTime date = today.subtract(Duration(days: i));
+      dateWidgets.add(_buildDateText(DateFormat('EEE').format(date), date.day));
+    }
+
+    dateWidgets.add(_buildDateText(DateFormat('EEE').format(today), today.day));
+
+    return dateWidgets;
+  }
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -105,14 +119,23 @@ class _HomeState extends State<Home> {
           child: ListView(
             padding: EdgeInsets.zero,
             children: [
-              const DrawerHeader(
-                decoration: BoxDecoration(
+              DrawerHeader(
+                decoration: const BoxDecoration(
                   color: Colors.black38,
                 ),
-                child: Text(
-                  'Health',
-                  style: HomeStyle.textsStylehome,
-                ),
+                child: Container(
+                    decoration: BoxDecoration(
+                        color: Colors.black,
+                        borderRadius: BorderRadius.circular(25)),
+                    margin: const EdgeInsets.all(10),
+                    // height: 50,
+                    // width: 50,
+                    child: ClipOval(
+                      child: Image.asset(
+                        "images/habit gif.gif",
+                        // width: 10,
+                      ),
+                    )),
               ),
               ListTile(
                 title: const Row(
@@ -147,17 +170,17 @@ class _HomeState extends State<Home> {
                     ),
                     IconButton(
                       onPressed: () {
-                        // FirebaseAuth.instance.signOut().then((value) {
-                        //   print("signout");
-                        //   Navigator.push(
-                        //       context,
-                        //       MaterialPageRoute(
-                        //         builder: (context) => const LoginForm(),
-                        //       ));
-                        //   ScaffoldMessenger.of(context).showSnackBar(
-                        //       const SnackBar(
-                        //           content: Text("You are logged out")));
-                        // });
+                        FirebaseAuth.instance.signOut().then((value) {
+                          print("signout");
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => const LoginForm(),
+                              ));
+                          ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                  content: Text("You are logged out")));
+                        });
                       },
                       icon: const Icon(Icons.logout),
                     )
@@ -169,7 +192,7 @@ class _HomeState extends State<Home> {
           ),
         ),
         bottomNavigationBar: FlashyTabBar(
-          backgroundColor: Colors.black,
+          // backgroundColor: Colors.grey,
           animationCurve: Curves.linear,
           selectedIndex: _selectedIndex,
           iconSize: 30,
@@ -178,18 +201,21 @@ class _HomeState extends State<Home> {
             _selectedIndex = Index;
             switch (_selectedIndex) {
               case 1:
+                ReminderPage();
                 Navigator.push(
                   context,
                   MaterialPageRoute(builder: (context) => const ReminderPage()),
                 );
                 break;
               case 2:
+                BookListScreen();
                 Navigator.push(
                   context,
                   MaterialPageRoute(builder: (context) => BookListScreen()),
                 );
                 break;
               case 3:
+                ChallengesPage();
                 Navigator.push(
                   context,
                   MaterialPageRoute(
@@ -201,30 +227,44 @@ class _HomeState extends State<Home> {
           }),
           items: [
             FlashyTabBarItem(
-              icon: const Icon(Icons.home),
+              activeColor: Colors.red,
+              // inactiveColor: Colors.blue,
+              icon: const Icon(
+                Icons.home,
+                color: Colors.black,
+              ),
               title: Text(
-                'Home',
+                '',
                 style: TabBarStyles.textsStyle,
               ),
             ),
             FlashyTabBarItem(
-              icon: const Icon(Icons.alarm),
+              icon: const Icon(
+                Icons.alarm,
+                color: Colors.black,
+              ),
               title: Text(
-                '''Reminder's''',
+                '',
                 style: TabBarStyles.textsStyle,
               ),
             ),
             FlashyTabBarItem(
-              icon: const Icon(Icons.read_more),
+              icon: const Icon(
+                Icons.read_more,
+                color: Colors.black,
+              ),
               title: Text(
-                'Read',
+                '',
                 style: TabBarStyles.textsStyle,
               ),
             ),
             FlashyTabBarItem(
-              icon: const Icon(Icons.chat),
+              icon: const Icon(
+                Icons.chat,
+                color: Colors.black,
+              ),
               title: Text(
-                'Community',
+                '',
                 style: TabBarStyles.textsStyle,
               ),
             ),
@@ -233,33 +273,37 @@ class _HomeState extends State<Home> {
         body: Column(
           children: [
             Padding(
-              padding: const EdgeInsets.all(16.0),
+              padding: const EdgeInsets.all(24.0),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Container(
-                      decoration: BoxDecoration(
-                          color: Colors.black,
-                          borderRadius: BorderRadius.circular(25)),
-                      margin: const EdgeInsets.all(10),
-                      height: 80,
-                      width: 80,
-                      child: ClipOval(
-                        child: Image.asset("images/habit gif.gif"),
-                      )),
-                  const Spacer(),
-                  const SizedBox(width: 4),
-                  _buildDateText("Wed", 15),
-                  const SizedBox(width: 4),
-                  _buildDateText("Thu", 16),
-                  const SizedBox(width: 4),
-                  _buildDateText("Fri", 17),
-                  const SizedBox(width: 4),
-                  _buildDateText("Sat", 18),
-                ],
+                children: _buildDateTextWidgets(3),
               ),
             ),
-            const SizedBox(height: 50),
+
+            // mainAxisAlignment: MainAxisAlignment.spaceBetween,
+
+            // Container(
+            //     decoration: BoxDecoration(
+            //         color: Colors.black,
+            //         borderRadius: BorderRadius.circular(25)),
+            //     margin: const EdgeInsets.all(10),
+            //     height: 80,
+            //     width: 80,
+            //     child: ClipOval(
+            //       child: Image.asset("images/habit gif.gif"),
+            //     )),
+            // const Spacer(),
+            // const SizedBox(width: 4),
+
+            // _buildDateText("Wed", 15),            // const SizedBox(height: 50),
+
+            // const SizedBox(width: 4),
+            // _buildDateText("Thu", 16),
+            // const SizedBox(width: 4),
+            // _buildDateText("Fri", 17),
+            // const SizedBox(width: 4),
+            // _buildDateText("Sat", 18),
+
             AnimatedTextKit(
               animatedTexts: [
                 TypewriterAnimatedText(

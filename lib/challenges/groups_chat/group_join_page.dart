@@ -36,10 +36,12 @@ class _GroupState extends State<Group> {
       if (requestSnapshot.docs.isNotEmpty) {
         final request = requestSnapshot.docs.first;
         final status = request['status'] == 'approved';
-        setState(() {
-          _isRequestSent = true;
-          _isRequestApproved = status;
-        });
+        if (mounted) {
+          setState(() {
+            _isRequestSent = true;
+            _isRequestApproved = status;
+          });
+        }
       }
     }
   }
@@ -54,9 +56,11 @@ class _GroupState extends State<Group> {
           "status": "pending",
           "timestamp": FieldValue.serverTimestamp(),
         });
-        setState(() {
-          _isRequestSent = true;
-        });
+        if (mounted) {
+          setState(() {
+            _isRequestSent = true;
+          });
+        }
       } catch (e) {
         print("Failed to send join request: $e");
       }
@@ -87,7 +91,7 @@ class _GroupState extends State<Group> {
             final group = snapshot.data!;
             _groupName = group['name'];
             return Text(
-              _groupName,
+              "Community: $_groupName",
               style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
             );
           },
@@ -120,15 +124,9 @@ class _GroupState extends State<Group> {
                   child: Center(
                       child: CircleAvatar(
                           child: FaIcon(FontAwesomeIcons.message))),
-                  // child: Image.asset(
-                  //   "images/loveeee.jpeg",
-                  //   width: 400,
-                  //   height: 300,
-                  // ),
                 ),
-                // const SizedBox(height: 20),
                 Text(
-                  group['description'],
+                  "Group Description: ${group['description']}",
                   style: const TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 16,
@@ -137,22 +135,43 @@ class _GroupState extends State<Group> {
                 ),
                 const SizedBox(height: 20),
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                  padding: const EdgeInsets.all(8.0),
                   child: Column(
                     children: [
-                      Text(
-                        _isRequestSent
-                            ? "Approved Or waiting for approval"
-                            : "Send request to join ${group['name']} group",
-                        style: const TextStyle(
-                          color: Colors.blue,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 15,
-                        ),
-                        textAlign: TextAlign.center,
+                      Row(
+                        children: [
+                          ElevatedButton.icon(
+                            onPressed: _isRequestSent ? null : sendJoinRequest,
+                            icon:
+                                Icon(_isRequestSent ? Icons.check : Icons.add),
+                            label: Text(
+                                _isRequestSent ? 'Request Sent' : 'Join Group'),
+                          ),
+                          const SizedBox(
+                            width: 10,
+                          ),
+                          Expanded(
+                            child: Text(
+                              _isRequestApproved
+                                  ? "Approved"
+                                  : _isRequestSent
+                                      ? "Waiting for approval"
+                                      : "Send request to join ${group['name']} group",
+                              style: const TextStyle(
+                                color: Colors.blue,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 15,
+                              ),
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(
+                        height: 15,
                       ),
                       const Text(
-                        "Please check chat box to ensure whether you're in the group or not",
+                        "Please check chat box and tap on the chat icon to ensure whether you're in the group or not \n Tap on Join group if chat box not found",
                         style: TextStyle(
                           color: Colors.red,
                           fontWeight: FontWeight.w500,
@@ -161,12 +180,6 @@ class _GroupState extends State<Group> {
                         textAlign: TextAlign.center,
                       ),
                       const SizedBox(height: 10),
-                      ElevatedButton.icon(
-                        onPressed: _isRequestSent ? null : sendJoinRequest,
-                        icon: Icon(_isRequestSent ? Icons.check : Icons.add),
-                        label: Text(
-                            _isRequestSent ? 'Request Sent' : 'Join Group'),
-                      ),
                     ],
                   ),
                 ),
@@ -182,7 +195,7 @@ class _GroupState extends State<Group> {
                       children: [
                         Text(
                           _isRequestApproved
-                              ? "You are in our $_groupName community. Enjoy chatting!"
+                              ? """You are in our '$_groupName' community. Enjoy chatting!"""
                               : "Request sent, waiting for approval.",
                           style: TextStyle(
                             color:
@@ -201,7 +214,9 @@ class _GroupState extends State<Group> {
                                 ? () {
                                     Navigator.of(context).push(
                                       MaterialPageRoute(
-                                        builder: (ctx) => GroupChat(),
+                                        builder: (ctx) => GroupChat(
+                                          communityId: widget.groupId,
+                                        ),
                                       ),
                                     );
                                   }

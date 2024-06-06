@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'dart:async'; // Add this import
+import 'dart:async';
 
 class ChatMessage {
   final String sender;
@@ -11,6 +11,10 @@ class ChatMessage {
 }
 
 class GroupChat extends StatefulWidget {
+  final String communityId;
+
+  const GroupChat({super.key, required this.communityId});
+
   @override
   _GroupChatState createState() => _GroupChatState();
 }
@@ -20,13 +24,20 @@ class _GroupChatState extends State<GroupChat> {
   TextEditingController messageController = TextEditingController();
   User? currentUser;
   late StreamSubscription _subscription;
+  String groupName = '';
 
   @override
   void initState() {
     super.initState();
     currentUser = FirebaseAuth.instance.currentUser;
 
+    // Fetch the group name
+    fetchGroupName();
+
+    // Listen to chat messages
     _subscription = FirebaseFirestore.instance
+        .collection('communities')
+        .doc(widget.communityId)
         .collection('messages')
         .orderBy('timestamp', descending: false)
         .snapshots()
@@ -44,6 +55,23 @@ class _GroupChatState extends State<GroupChat> {
     });
   }
 
+  Future<void> fetchGroupName() async {
+    final groupSnapshot = await FirebaseFirestore.instance
+        .collection('groups')
+        .doc(widget.communityId)
+        .get();
+
+    if (groupSnapshot.exists) {
+      setState(() {
+        groupName = groupSnapshot['name'];
+      });
+    } else {
+      setState(() {
+        groupName = 'Group Chat';
+      });
+    }
+  }
+
   @override
   void dispose() {
     _subscription.cancel();
@@ -53,7 +81,11 @@ class _GroupChatState extends State<GroupChat> {
 
   void _sendMessage(String message) {
     if (message.isNotEmpty && currentUser != null) {
-      FirebaseFirestore.instance.collection('messages').add({
+      FirebaseFirestore.instance
+          .collection('communities')
+          .doc(widget.communityId)
+          .collection('messages')
+          .add({
         'sender': currentUser!.email,
         'message': message,
         'timestamp': FieldValue.serverTimestamp(),
@@ -66,38 +98,7 @@ class _GroupChatState extends State<GroupChat> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        actions: [
-          IconButton(
-            onPressed: () {
-              showDialog(
-                context: context,
-                builder: (BuildContext context) {
-                  return AlertDialog(
-                    title:
-                        const Text("Are you sure you want to leave the group?"),
-                    actions: <Widget>[
-                      TextButton(
-                        child: const Text("No"),
-                        onPressed: () {
-                          Navigator.of(context).pop(); // Close the dialog
-                        },
-                      ),
-                      TextButton(
-                        child: const Text("Yes"),
-                        onPressed: () {
-                          // Implement leaving the group logic here
-                          Navigator.of(context).pop(); // Close the dialog
-                        },
-                      ),
-                    ],
-                  );
-                },
-              );
-            },
-            icon: const Icon(Icons.logout),
-          ),
-        ],
-        title: const Text('Chat Group'),
+        title: Text(groupName),
       ),
       body: Column(
         mainAxisAlignment: MainAxisAlignment.end,

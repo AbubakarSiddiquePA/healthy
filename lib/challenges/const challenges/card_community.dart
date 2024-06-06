@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:healthy/challenges/groups_chat/group_join_page.dart';
 
 Widget buildChallengeCard(
@@ -14,11 +15,21 @@ Widget buildChallengeCard(
       child: Container(
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(18),
-          border: Border.all(width: 1, color: Colors.orange),
+          border: Border.all(width: 1, color: Colors.black),
           color: Colors.white,
         ),
         child: Column(
           children: [
+            const Padding(
+              padding: EdgeInsets.all(16.0),
+              child: CircleAvatar(
+                child: FaIcon(
+                  FontAwesomeIcons.whatsapp,
+                  color: Colors.white,
+                ),
+                backgroundColor: Colors.black,
+              ),
+            ),
             // imageUrl.startsWith('http')
             // Image.network(
             //   imageUrl,
