@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:healthy/challenges/const%20challenges/card_community.dart';
-import 'package:healthy/challenges/const%20challenges/const.dart';
+import 'package:healthy/community/const_community/community_card.dart';
 
-class ChallengesPage extends StatelessWidget {
-  const ChallengesPage({super.key});
+class CommunityPage extends StatelessWidget {
+  const CommunityPage({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -25,9 +24,8 @@ class ChallengesPage extends StatelessWidget {
           ),
           body: Column(
             children: [
-              kheight10,
               Expanded(
-                  child: SingleChildScrollView(child: challengeItems(context))),
+                  child: SingleChildScrollView(child: communityItems(context))),
             ],
           )),
     );

@@ -2,7 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:healthy/challenges/groups_chat/chat_page.dart';
+import 'package:healthy/community/community_groups_chat/community_chat_page.dart';
 
 class Group extends StatefulWidget {
   final String groupId;

@@ -3,14 +3,14 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flashy_tab_bar2/flashy_tab_bar2.dart';
 import 'package:flutter/material.dart';
-import 'package:healthy/addhabit/add_habit.dart';
-import 'package:healthy/authentication/signin/signin.dart';
-import 'package:healthy/challenges/const%20challenges/community.dart';
-import 'package:healthy/const/homestyle.dart';
-import 'package:healthy/const/tabbarstyle.dart';
-import 'package:healthy/habitmodelclass/habit_model.dart';
-import 'package:healthy/read/read.dart';
-import 'package:healthy/reminders/rmndr_home.dart';
+import 'package:healthy/community/const_community/community.dart';
+import 'package:healthy/habits/add_habit/add_habit.dart';
+import 'package:healthy/authentication/sign_in/sign_in.dart';
+import 'package:healthy/const/const_home_style.dart';
+import 'package:healthy/const/const_tabbar_style.dart';
+import 'package:healthy/books_read/books_read.dart';
+import 'package:healthy/habits/habit_model_class/habit_model.dart';
+import 'package:healthy/reminders/reminders_home.dart';
 
 import 'package:intl/intl.dart';
 
@@ -215,11 +215,11 @@ class _HomeState extends State<Home> {
                 );
                 break;
               case 3:
-                ChallengesPage();
+                const CommunityPage();
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                      builder: (context) => const ChallengesPage()),
+                      builder: (context) => const CommunityPage()),
                 );
                 break;
               default:

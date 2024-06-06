@@ -16,6 +16,7 @@ class GroupChat extends StatefulWidget {
   const GroupChat({super.key, required this.communityId});
 
   @override
+  // ignore: library_private_types_in_public_api
   _GroupChatState createState() => _GroupChatState();
 }
 

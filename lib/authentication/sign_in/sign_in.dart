@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:healthy/authentication/authfunctions/authfunctions.dart';
-import 'package:healthy/providers/authprovider/authprovider.dart';
+import 'package:healthy/authentication/auth_functions/auth_functions.dart';
+import 'package:healthy/authentication/auth_provider/auth_provider.dart';
 import 'package:provider/provider.dart';
 
 class LoginForm extends StatefulWidget {

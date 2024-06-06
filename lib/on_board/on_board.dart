@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:healthy/homescreen/home.dart';
+import 'package:healthy/home_screen/home.dart';
 
 class Onboard extends StatelessWidget {
   const Onboard({super.key});

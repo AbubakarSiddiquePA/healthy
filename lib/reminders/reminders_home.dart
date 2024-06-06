@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:healthy/reminders/add_rmndr.dart';
-import 'package:healthy/reminders/services/ntfction_logic.dart';
+import 'package:healthy/reminders/reminders_add.dart';
+import 'package:healthy/reminders/services/reminders_notification_logic.dart';
 import 'package:intl/intl.dart';
 
 class ReminderPage extends StatefulWidget {

@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:healthy/habitmodelclass/habit_model.dart';
+import 'package:healthy/habits/habit_model_class/habit_model.dart';
 
 class AddHabitProvider extends ChangeNotifier {
   String habitName = '';
@@ -53,8 +53,8 @@ class AddHabitProvider extends ChangeNotifier {
         .collection("habitsCollection")
         .add(newHabit.toMap())
         .then((docRef) {
-      newHabit.id =
-          docRef.id; // Update the habit id with the generated id from Firestore
+      newHabit.id = docRef
+          .id; // Updated the habit id with the generated id from Firestore
       habits.add(newHabit); // Add the new habit to the local list
       notifyListeners(); // Notify listeners to update the UI
     });

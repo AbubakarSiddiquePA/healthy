@@ -2,8 +2,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:healthy/reminders/rmndrmodel.dart';
-import 'package:healthy/reminders/services/ntfction_logic.dart';
+import 'package:healthy/reminders/reminders_model.dart';
+import 'package:healthy/reminders/services/reminders_notification_logic.dart';
 
 Future<void> addReminder(BuildContext context, String uid) async {
   TimeOfDay time = TimeOfDay.now();

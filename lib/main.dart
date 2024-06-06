@@ -2,10 +2,10 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:healthy/authentication/signin/signin.dart';
-import 'package:healthy/homescreen/home.dart';
-import 'package:healthy/providers/authprovider/authprovider.dart';
-import 'package:healthy/providers/authprovider/habitprovider/addhabitprovider.dart';
+import 'package:healthy/authentication/auth_provider/auth_provider.dart';
+import 'package:healthy/authentication/sign_in/sign_in.dart';
+import 'package:healthy/home_screen/home.dart';
+import 'package:healthy/habits/habit_provider/add_habit_provider.dart';
 import 'package:provider/provider.dart';
 
 void main() async {

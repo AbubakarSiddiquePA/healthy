@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:healthy/const/homestyle.dart';
-import 'package:healthy/providers/authprovider/habitprovider/addhabitprovider.dart';
-import 'package:healthy/reminders/rmndr_home.dart';
+import 'package:healthy/const/const_home_style.dart';
+import 'package:healthy/habits/habit_provider/add_habit_provider.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
@@ -198,12 +197,14 @@ class MultiSelectChip extends StatefulWidget {
   final List<int> initialValue;
   final Function(List<int>) onSelectionChanged;
 
-  MultiSelectChip({
+  const MultiSelectChip({
+    super.key,
     required this.initialValue,
     required this.onSelectionChanged,
   });
 
   @override
+  // ignore: library_private_types_in_public_api
   _MultiSelectChipState createState() => _MultiSelectChipState();
 }
 

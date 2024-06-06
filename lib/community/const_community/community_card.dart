@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:healthy/challenges/groups_chat/group_join_page.dart';
+import 'package:healthy/community/community_groups_chat/community_group_join_page.dart';
 
-Widget buildChallengeCard(
+Widget buildCommunityCard(
     BuildContext context,
     // String imageUrl,
     String title,
@@ -23,11 +23,11 @@ Widget buildChallengeCard(
             const Padding(
               padding: EdgeInsets.all(16.0),
               child: CircleAvatar(
+                backgroundColor: Colors.black,
                 child: FaIcon(
                   FontAwesomeIcons.whatsapp,
                   color: Colors.white,
                 ),
-                backgroundColor: Colors.black,
               ),
             ),
             // imageUrl.startsWith('http')
@@ -54,7 +54,7 @@ Widget buildChallengeCard(
   );
 }
 
-Widget challengeItems(BuildContext context) {
+Widget communityItems(BuildContext context) {
   return StreamBuilder<QuerySnapshot>(
     stream: FirebaseFirestore.instance.collection('groups').snapshots(),
     builder: (context, snapshot) {
@@ -80,7 +80,7 @@ Widget challengeItems(BuildContext context) {
           // Check if 'coverImage' exists and is not null, otherwise use a default image
           // String coverImageUrl = data['coverImage']; // default image URL
 
-          return buildChallengeCard(
+          return buildCommunityCard(
             context,
             // coverImageUrl,
             data['name'],
