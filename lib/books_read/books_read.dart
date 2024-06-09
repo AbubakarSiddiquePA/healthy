@@ -13,7 +13,7 @@ class BookListScreen extends StatelessWidget {
         stream: FirebaseFirestore.instance.collection('books').snapshots(),
         builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
           if (!snapshot.hasData) {
-            return Center(child: CircularProgressIndicator());
+            return const Center(child: CircularProgressIndicator());
           }
 
           final books = snapshot.data!.docs.map((doc) {

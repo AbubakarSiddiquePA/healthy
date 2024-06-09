@@ -3,11 +3,15 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'dart:async';
 
+import 'package:intl/intl.dart';
+
 class ChatMessage {
   final String sender;
   final String message;
+  final Timestamp timestamp;
 
-  ChatMessage({required this.sender, required this.message});
+  ChatMessage(
+      {required this.sender, required this.message, required this.timestamp});
 }
 
 class GroupChat extends StatefulWidget {
@@ -49,6 +53,7 @@ class _GroupChatState extends State<GroupChat> {
             return ChatMessage(
               sender: doc['sender'],
               message: doc['message'],
+              timestamp: doc["timestamp"] ?? Timestamp.now(),
             );
           }).toList();
         });
@@ -95,6 +100,12 @@ class _GroupChatState extends State<GroupChat> {
     }
   }
 
+  String formatTimestamp(Timestamp timestamp) {
+    final DateTime dateTime = timestamp.toDate();
+    final DateFormat formatter = DateFormat('h:mm a dd/MMMM/yyyy');
+    return formatter.format(dateTime);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -122,11 +133,27 @@ class _GroupChatState extends State<GroupChat> {
                         color: isCurrentUser ? Colors.blue : Colors.grey[300],
                         borderRadius: BorderRadius.circular(8.0),
                       ),
-                      child: Text(
-                        chatMessage.message,
-                        style: TextStyle(
-                          color: isCurrentUser ? Colors.white : Colors.black,
-                        ),
+                      child: Column(
+                        crossAxisAlignment: isCurrentUser
+                            ? CrossAxisAlignment.end
+                            : CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            chatMessage.message,
+                            style: TextStyle(
+                              color:
+                                  isCurrentUser ? Colors.white : Colors.black,
+                            ),
+                          ),
+                          Text(
+                            formatTimestamp(chatMessage.timestamp),
+                            style: TextStyle(
+                              color:
+                                  isCurrentUser ? Colors.white : Colors.black,
+                              fontSize: 10,
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                   ),
