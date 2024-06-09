@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:healthy/reminders/reminders_add.dart';
+import 'package:healthy/reminders/reminders_delete.dart';
 import 'package:healthy/reminders/services/reminders_notification_logic.dart';
 import 'package:intl/intl.dart';
 
@@ -41,7 +42,7 @@ class _ReminderPageState extends State<ReminderPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        leading: Container(),
+        // leading: Container(),
         backgroundColor: Colors.white,
         centerTitle: true,
         elevation: 0,
@@ -51,6 +52,7 @@ class _ReminderPageState extends State<ReminderPage> {
         ),
       ),
       floatingActionButton: FloatingActionButton(
+        backgroundColor: Colors.limeAccent[400],
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(100)),
         onPressed: () async {
           if (user != null) {
@@ -58,24 +60,12 @@ class _ReminderPageState extends State<ReminderPage> {
             setState(() {});
           }
         },
-        child: Container(
-          decoration: BoxDecoration(
-              gradient: const LinearGradient(
-                colors: Colors.accents,
-                begin: Alignment.centerLeft,
-                end: Alignment.centerRight,
-              ),
-              borderRadius: BorderRadius.circular(100),
-              boxShadow: const [
-                BoxShadow(
-                    color: Colors.black, blurRadius: 2, offset: Offset(0, 2))
-              ]),
-          child: const Center(
-              child: Icon(
-            Icons.add,
-            size: 30,
-          )),
-        ),
+        child: const Center(
+            child: Icon(
+          Icons.add,
+          color: Colors.black,
+          size: 30,
+        )),
       ),
       body: user == null
           ? const Center(child: CircularProgressIndicator())
@@ -118,24 +108,47 @@ class _ReminderPageState extends State<ReminderPage> {
                         data[index - 1].data() as Map<String, dynamic>;
                     final formattedTime =
                         DateFormat.jm().format(reminderData['time'].toDate());
+                    final message = reminderData['message'] ?? 'No message';
 
                     DateTime dateTime = reminderData['time'].toDate();
                     NotificationLogic.showNotifications(
                       dateTime: dateTime,
                       id: data[index - 1].id.hashCode,
                       title: "Reminder",
-                      body: "It's time for your reminder at $formattedTime",
+                      body: "Reminder at $formattedTime - $message",
                     );
 
                     return Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 18),
+                      padding: const EdgeInsets.all(16),
                       child: ListTile(
                         shape: RoundedRectangleBorder(
                           side: const BorderSide(width: 1, color: Colors.black),
                           borderRadius: BorderRadius.circular(10),
                         ),
-                        title: Text('🔔   $formattedTime'),
-                        subtitle: const Text("Reminder"),
+                        title: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Text('🔔 $formattedTime'),
+                        ),
+                        subtitle: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Card(
+                              color: Colors.limeAccent[400],
+                              child: Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Text(message),
+                              )),
+                        ),
+                        // trailing: deleteReminder(context, id, uid)
+                        trailing: CircleAvatar(
+                          backgroundColor: Colors.limeAccent[400],
+                          child: IconButton(
+                            icon: const Icon(Icons.delete, color: Colors.red),
+                            onPressed: () {
+                              deleteReminder(
+                                  context, data[index - 1].id, user!.uid);
+                            },
+                          ),
+                        ),
                       ),
                     );
                   },

@@ -10,8 +10,8 @@ deleteReminder(BuildContext context, String id, String uid) {
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(25),
         ),
-        title: Text("Delete Reminder"),
-        content: Text("Are you sure you want to delete"),
+        title: const Text("Delete Reminder"),
+        content: const Text("Are you sure you want to delete this reminder?"),
         actions: [
           TextButton(
               onPressed: () {
@@ -28,12 +28,12 @@ deleteReminder(BuildContext context, String id, String uid) {
                 }
                 Navigator.pop(context);
               },
-              child: Text("Delete")),
+              child: const Text("Delete")),
           TextButton(
               onPressed: () {
                 Navigator.pop(context);
               },
-              child: Text("Cancel")),
+              child: const Text("Cancel")),
         ],
       );
     },
