@@ -29,6 +29,7 @@ class BookListScreen extends StatelessWidget {
             itemCount: books.length,
             itemBuilder: (context, index) {
               return Card(
+                color: Colors.white,
                 child: ListTile(
                   leading: Image.network(books[index].imageUrl),
                   title: Text(books[index].title),
@@ -37,7 +38,9 @@ class BookListScreen extends StatelessWidget {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       IconButton(
-                        icon: const Icon(Icons.remove_red_eye),
+                        icon: CircleAvatar(
+                            backgroundColor: Colors.limeAccent[400],
+                            child: const Icon(Icons.picture_as_pdf)),
                         onPressed: () {
                           showDialog(
                             context: context,
@@ -64,7 +67,9 @@ class BookListScreen extends StatelessWidget {
                         },
                       ),
                       IconButton(
-                        icon: const Icon(Icons.download),
+                        icon: CircleAvatar(
+                            backgroundColor: Colors.limeAccent[400],
+                            child: const Icon(Icons.download)),
                         onPressed: () async {
                           final url = books[index].bookFileUrl;
                           if (await canLaunch(url)) {
