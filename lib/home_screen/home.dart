@@ -3,12 +3,13 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flashy_tab_bar2/flashy_tab_bar2.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:healthy/community/const_community/community.dart';
 import 'package:healthy/habits/add_habit/add_habit.dart';
 import 'package:healthy/authentication/sign_in/sign_in.dart';
 import 'package:healthy/const/const_home_style.dart';
 import 'package:healthy/const/const_tabbar_style.dart';
-import 'package:healthy/books_read/books_read.dart';
+import 'package:healthy/books_read/books_screen.dart';
 import 'package:healthy/habits/habit_model_class/habit_model.dart';
 import 'package:healthy/reminders/reminders_home.dart';
 
@@ -82,9 +83,11 @@ class _HomeState extends State<Home> {
       child: Scaffold(
         backgroundColor: Colors.white,
         appBar: AppBar(
+          centerTitle: true,
           title: const Text(
             "Healthy",
-            style: TextStyle(color: Colors.grey),
+            style: TextStyle(
+                fontWeight: FontWeight.bold, fontSize: 18, color: Colors.black),
           ),
           actions: [
             Padding(
@@ -201,17 +204,18 @@ class _HomeState extends State<Home> {
             _selectedIndex = Index;
             switch (_selectedIndex) {
               case 1:
-                ReminderPage();
+                const ReminderPage();
                 Navigator.push(
                   context,
                   MaterialPageRoute(builder: (context) => const ReminderPage()),
                 );
                 break;
               case 2:
-                BookListScreen();
+                const BookListScreen();
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => BookListScreen()),
+                  MaterialPageRoute(
+                      builder: (context) => const BookListScreen()),
                 );
                 break;
               case 3:
@@ -279,31 +283,6 @@ class _HomeState extends State<Home> {
                 children: _buildDateTextWidgets(3),
               ),
             ),
-
-            // mainAxisAlignment: MainAxisAlignment.spaceBetween,
-
-            // Container(
-            //     decoration: BoxDecoration(
-            //         color: Colors.black,
-            //         borderRadius: BorderRadius.circular(25)),
-            //     margin: const EdgeInsets.all(10),
-            //     height: 80,
-            //     width: 80,
-            //     child: ClipOval(
-            //       child: Image.asset("images/habit gif.gif"),
-            //     )),
-            // const Spacer(),
-            // const SizedBox(width: 4),
-
-            // _buildDateText("Wed", 15),            // const SizedBox(height: 50),
-
-            // const SizedBox(width: 4),
-            // _buildDateText("Thu", 16),
-            // const SizedBox(width: 4),
-            // _buildDateText("Fri", 17),
-            // const SizedBox(width: 4),
-            // _buildDateText("Sat", 18),
-
             AnimatedTextKit(
               animatedTexts: [
                 TypewriterAnimatedText(
@@ -396,7 +375,7 @@ class _HomeState extends State<Home> {
                                         padding: EdgeInsets.all(8.0),
                                         child: Text(
                                           "Motivation:",
-                                          style: HomeStyle.textsStylecard,
+                                          style: HomeStyle.textsStylehome,
                                         ),
                                       ),
                                       Flexible(
@@ -409,7 +388,7 @@ class _HomeState extends State<Home> {
                                               style: const TextStyle(
                                                   fontSize: 16,
                                                   fontWeight: FontWeight.bold,
-                                                  color: Colors.grey)),
+                                                  color: Colors.white)),
                                         ),
                                       ),
                                     ],
@@ -425,6 +404,7 @@ class _HomeState extends State<Home> {
                                           style: HomeStyle.textsStylecard,
                                         ),
                                         Card(
+                                          color: Colors.white,
                                           child: Padding(
                                             padding: const EdgeInsets.all(8.0),
                                             child: Text(
@@ -447,6 +427,7 @@ class _HomeState extends State<Home> {
                                           style: HomeStyle.textsStylecard,
                                         ),
                                         Card(
+                                          color: Colors.white,
                                           child: Padding(
                                             padding: const EdgeInsets.all(8.0),
                                             child: Text(
@@ -495,6 +476,7 @@ class _HomeState extends State<Home> {
                                         );
                                       },
                                       icon: const CircleAvatar(
+                                        backgroundColor: Colors.white,
                                         child: Icon(Icons.delete,
                                             color: Colors.redAccent),
                                       ),
