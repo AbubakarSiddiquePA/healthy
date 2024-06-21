@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:healthy/community/const_community/community_card.dart';
+import 'package:healthy/community/components/community_card.dart';
 
 class CommunityPage extends StatelessWidget {
   const CommunityPage({super.key});

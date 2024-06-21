@@ -16,7 +16,11 @@ class BookListScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
-        title: const Text('Book List'),
+        title: const Text(
+          'Book List',
+          style: TextStyle(
+              fontWeight: FontWeight.bold, fontSize: 18, color: Colors.black),
+        ),
       ),
       body: StreamBuilder(
         stream: FirebaseFirestore.instance.collection('books').snapshots(),

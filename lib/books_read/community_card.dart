@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:healthy/community/community_groups_chat/community_group_join_page.dart';
+import 'package:healthy/community/components/community_group_join_page.dart';
 
 Widget buildCommunityCard(
     BuildContext context,

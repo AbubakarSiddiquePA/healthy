@@ -4,13 +4,15 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flashy_tab_bar2/flashy_tab_bar2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:healthy/community/const_community/community.dart';
+import 'package:healthy/community/community.dart';
+import 'package:healthy/drawer/drawer_about.dart';
 import 'package:healthy/habits/add_habit/add_habit.dart';
 import 'package:healthy/authentication/sign_in/sign_in.dart';
 import 'package:healthy/const/const_home_style.dart';
 import 'package:healthy/const/const_tabbar_style.dart';
 import 'package:healthy/books_read/books_screen.dart';
 import 'package:healthy/habits/habit_model_class/habit_model.dart';
+import 'package:healthy/privacypolicy/privacy_policy_menu.dart';
 import 'package:healthy/reminders/reminders_home.dart';
 
 import 'package:intl/intl.dart';
@@ -69,10 +71,12 @@ class _HomeState extends State<Home> {
 
     for (int i = days; i > 0; i--) {
       DateTime date = today.subtract(Duration(days: i));
-      dateWidgets.add(_buildDateText(DateFormat('EEE').format(date), date.day));
+      dateWidgets
+          .add(_buildDateText(DateFormat('EEE').format(date), date.day, false));
     }
 
-    dateWidgets.add(_buildDateText(DateFormat('EEE').format(today), today.day));
+    dateWidgets.add(_buildDateText(DateFormat('EEE').format(today), today.day,
+        true)); //true for today's date
 
     return dateWidgets;
   }
@@ -143,6 +147,24 @@ class _HomeState extends State<Home> {
               ListTile(
                 title: const Row(
                   children: [
+                    Text('Privacy Policy'),
+                    SizedBox(
+                      width: 30,
+                    ),
+                    Icon(Icons.privacy_tip)
+                  ],
+                ),
+                onTap: () {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const PrivacyPolicyMenu(),
+                      ));
+                },
+              ),
+              ListTile(
+                title: const Row(
+                  children: [
                     Text('About'),
                     SizedBox(
                       width: 30,
@@ -150,19 +172,13 @@ class _HomeState extends State<Home> {
                     Icon(Icons.info)
                   ],
                 ),
-                onTap: () {},
-              ),
-              ListTile(
-                title: const Row(
-                  children: [
-                    Text('Share'),
-                    SizedBox(
-                      width: 30,
-                    ),
-                    Icon(Icons.share)
-                  ],
-                ),
-                onTap: () {},
+                onTap: () {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => DrawerAbout(),
+                      ));
+                },
               ),
               ListTile(
                 title: Row(
@@ -173,20 +189,75 @@ class _HomeState extends State<Home> {
                     ),
                     IconButton(
                       onPressed: () {
-                        FirebaseAuth.instance.signOut().then((value) {
-                          print("signout");
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => const LoginForm(),
-                              ));
-                          ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                  content: Text("You are logged out")));
-                        });
+                        showDialog(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return AlertDialog(
+                              title: const Text("Logout Confirmation"),
+                              content: const Text(
+                                  "Are you sure you want to logout?"),
+                              actions: [
+                                TextButton(
+                                  onPressed: () {
+                                    Navigator.of(context)
+                                        .pop(); // Close the dialog
+                                  },
+                                  child: const Text("Cancel",
+                                      style: TextStyle(color: Colors.blue)),
+                                ),
+                                TextButton(
+                                  onPressed: () {
+                                    FirebaseAuth.instance
+                                        .signOut()
+                                        .then((value) {
+                                      print("signout");
+                                      Navigator.pushAndRemoveUntil(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) =>
+                                              const LoginForm(),
+                                        ),
+                                        (Route<dynamic> route) => false,
+                                      );
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(
+                                        const SnackBar(
+                                          content: Text("You are logged out"),
+                                        ),
+                                      );
+                                    });
+                                    Navigator.of(context)
+                                        .pop(); // Close the dialog
+                                  },
+                                  child: const Text(
+                                    "Logout",
+                                    style: TextStyle(color: Colors.red),
+                                  ),
+                                ),
+                              ],
+                            );
+                          },
+                        );
                       },
                       icon: const Icon(Icons.logout),
                     )
+
+                    // IconButton(
+                    //   onPressed: () {
+                    //     FirebaseAuth.instance.signOut().then((value) {
+                    //       print("signout");
+                    //       Navigator.push(
+                    //           context,
+                    //           MaterialPageRoute(
+                    //             builder: (context) => const LoginForm(),
+                    //           ));
+                    //       ScaffoldMessenger.of(context).showSnackBar(
+                    //           const SnackBar(
+                    //               content: Text("You are logged out")));
+                    //     });
+                    //   },
+                    //   icon: const Icon(Icons.logout),
+                    // )
                   ],
                 ),
                 onTap: () {},
@@ -481,19 +552,6 @@ class _HomeState extends State<Home> {
                                             color: Colors.redAccent),
                                       ),
                                     ),
-
-                                    // child: IconButton(
-                                    //   onPressed: () {
-                                    //     deleteHabit(habit.id);
-                                    //     setState(() {
-                                    //       habits.removeAt(index);
-                                    //     });
-                                    //   },
-                                    //   icon: const CircleAvatar(
-                                    //     child: Icon(Icons.delete,
-                                    //         color: Colors.redAccent),
-                                    //   ),
-                                    // ),
                                   ),
                                 ],
                               ),
@@ -511,11 +569,13 @@ class _HomeState extends State<Home> {
   }
 }
 
-Widget _buildDateText(String day, int date) {
+Widget _buildDateText(String day, int date, bool isToday) {
   return Container(
     padding: const EdgeInsets.all(8.0),
     decoration: BoxDecoration(
-        color: Colors.limeAccent[400],
+        color: isToday
+            ? Colors.white
+            : Colors.limeAccent[400], //different color for today's date
         borderRadius: BorderRadius.circular(8),
         boxShadow: [
           BoxShadow(

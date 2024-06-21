@@ -2,7 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:healthy/community/community_groups_chat/community_chat_page.dart';
+import 'package:healthy/community/components/community_chat_page.dart';
 
 class Group extends StatefulWidget {
   final String groupId;
@@ -118,12 +118,13 @@ class _GroupState extends State<Group> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                const SizedBox(
+                SizedBox(
                   width: 500,
                   height: 150,
                   child: Center(
                       child: CircleAvatar(
-                          child: FaIcon(FontAwesomeIcons.message))),
+                          backgroundColor: Colors.limeAccent[400],
+                          child: const FaIcon(FontAwesomeIcons.message))),
                 ),
                 Text(
                   "Group Description: ${group['description']}",
@@ -141,11 +142,22 @@ class _GroupState extends State<Group> {
                       Row(
                         children: [
                           ElevatedButton.icon(
+                            style: ElevatedButton.styleFrom(
+                              // foregroundColor:
+                              //     const Color.fromARGB(255, 202, 85, 85),
+                              backgroundColor: _isRequestSent
+                                  ? Colors.grey
+                                  : Colors.white, // Text color
+                            ),
                             onPressed: _isRequestSent ? null : sendJoinRequest,
-                            icon:
-                                Icon(_isRequestSent ? Icons.check : Icons.add),
+                            icon: Icon(
+                              _isRequestSent ? Icons.check : Icons.add,
+                              color: Colors.black,
+                            ),
                             label: Text(
-                                _isRequestSent ? 'Request Sent' : 'Join Group'),
+                              _isRequestSent ? 'Request Sent' : 'Join Group',
+                              style: const TextStyle(color: Colors.black),
+                            ),
                           ),
                           const SizedBox(
                             width: 10,
@@ -156,11 +168,11 @@ class _GroupState extends State<Group> {
                                   ? "Approved"
                                   : _isRequestSent
                                       ? "Waiting for approval"
-                                      : "Send request to join ${group['name']} group",
+                                      : "Send request to join-${group['name']} group",
                               style: const TextStyle(
                                 color: Colors.blue,
                                 fontWeight: FontWeight.bold,
-                                fontSize: 15,
+                                fontSize: 10,
                               ),
                               textAlign: TextAlign.center,
                             ),

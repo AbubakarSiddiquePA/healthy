@@ -48,7 +48,8 @@ class _ReminderPageState extends State<ReminderPage> {
         elevation: 0,
         title: const Text(
           "Reminders",
-          style: TextStyle(color: Colors.black, fontWeight: FontWeight.w700),
+          style: TextStyle(
+              fontWeight: FontWeight.bold, fontSize: 18, color: Colors.black),
         ),
       ),
       floatingActionButton: FloatingActionButton(
